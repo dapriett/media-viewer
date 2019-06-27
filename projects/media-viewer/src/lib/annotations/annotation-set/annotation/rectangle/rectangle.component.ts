@@ -1,6 +1,5 @@
 import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { Rectangle } from './rectangle.model';
-import { IResizeEvent } from 'angular2-draggable/lib/models/resize-event';
 
 @Component({
   selector: 'mv-anno-rectangle',
@@ -20,6 +19,8 @@ export class RectangleComponent {
   y: number;
   left: string;
   top: string;
+  bottom: string;
+  right: string;
 
   @Output() click = new EventEmitter();
   @Output() update = new EventEmitter<Rectangle>();
@@ -46,8 +47,19 @@ export class RectangleComponent {
   onMouseMove(e) {
     if (this.selected) {
       const coordinates = this.getTrueCoordinates(e.x, e.y);
-      this.top = coordinates.y + 'px';
-      this.left = coordinates.x + 'px';
+      if (this.rotate === 90) {
+        this.left = coordinates.y + 'px';
+        this.bottom = coordinates.x + 'px';
+      } else if (this.rotate === 180) {
+        this.bottom = coordinates.y + 'px';
+        this.right = coordinates.x + 'px';
+      } else if (this.rotate === 270) {
+        this.right = coordinates.y + 'px';
+        this.top = coordinates.x + 'px';
+      } else {
+        this.top = coordinates.y + 'px';
+        this.left = coordinates.x + 'px';
+      }
     }
   }
 
@@ -82,6 +94,6 @@ export class RectangleComponent {
     return {
       x: (x + scrollX) - offsetX,
       y: (y + scrollY) - offsetY,
-    }
+    };
   }
 }
