@@ -1,4 +1,4 @@
-<div [ngDraggable]="draggable"
+<div #rectangleDiv
      ngResizable
      rzHandles="all"
      class="rectangle"
@@ -6,10 +6,10 @@
      [style.backgroundColor]="'#' + color"
      [style.width]="rectangle.width * zoom + 'px'"
      [style.height]="rectangle.height * zoom + 'px'"
-     [position]="{ x: rectangle.x * zoom, y: rectangle.y * zoom }"
-     (stopped)="onMove($event)"
-     (rzStop)="onResize($event)"
-     (click)="onClick()">
+     [style.left]="left"
+     [style.top]="top"
+     (mousedown)="onMouseDown($event)"
+     (mouseup)="onMouseUp()">
 </div>
 <mv-popup-toolbar
   *ngIf="selected"
