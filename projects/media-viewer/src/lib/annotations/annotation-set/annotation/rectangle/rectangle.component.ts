@@ -18,9 +18,9 @@ export class RectangleComponent {
   x: number;
   y: number;
   left: string;
+  right: string;
   top: string;
   bottom: string;
-  right: string;
 
   @Output() click = new EventEmitter();
   @Output() update = new EventEmitter<Rectangle>();
@@ -47,18 +47,19 @@ export class RectangleComponent {
   onMouseMove(e) {
     if (this.selected) {
       const coordinates = this.getTrueCoordinates(e.x, e.y);
+      console.log(coordinates);
       if (this.rotate === 90) {
         this.left = coordinates.y + 'px';
         this.bottom = coordinates.x + 'px';
       } else if (this.rotate === 180) {
-        this.bottom = coordinates.y + 'px';
         this.right = coordinates.x + 'px';
+        this.bottom = coordinates.y + 'px';
       } else if (this.rotate === 270) {
         this.right = coordinates.y + 'px';
         this.top = coordinates.x + 'px';
       } else {
-        this.top = coordinates.y + 'px';
         this.left = coordinates.x + 'px';
+        this.top = coordinates.y + 'px';
       }
     }
   }
