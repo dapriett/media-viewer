@@ -8,8 +8,8 @@ import { AnnotationComponent } from './annotation-set/annotation/annotation.comp
 import { AnnotationSetComponent } from './annotation-set/annotation-set.component';
 import { RectangleComponent } from './annotation-set/annotation/rectangle/rectangle.component';
 import { CommentComponent } from './annotation-set/annotation/comment/comment.component';
-import { AngularDraggableModule } from 'angular2-draggable';
 import { PopupToolbarComponent } from './annotation-set/annotation/rectangle/popup-toolbar/popup-toolbar.component';
+import {AngularDraggableModule} from './annotation-set/annotation/draggable/angular-draggable.module';
 
 @NgModule({
   imports: [
@@ -24,7 +24,7 @@ import { PopupToolbarComponent } from './annotation-set/annotation/rectangle/pop
     AnnotationSetComponent,
     RectangleComponent,
     CommentComponent,
-    PopupToolbarComponent
+    PopupToolbarComponent,
   ],
   entryComponents: [
     AnnotationComponent,

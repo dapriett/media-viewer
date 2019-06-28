@@ -23,24 +23,18 @@ export class PopupToolbarComponent {
       };
     } else if (this.rotate === 90) {
       return {
-        transform: 'rotate(-90deg)',
-        'transform-origin': 'top left',
-        top: this.rectangle.y * this.zoom + this.rectangle.height / 2 * this.zoom + this.WIDTH / 2 + 'px',
-        left: (this.rectangle.x * this.zoom) - (this.HEIGHT) + 'px'
+        top: this.rectangle.x * this.zoom - this.HEIGHT + 'px',
+        right: ((this.rectangle.y + this.rectangle.height / 2) * this.zoom) - (this.WIDTH / 2) + 'px'
       };
     } else if (this.rotate === 180) {
       return {
-        transform: 'rotate(-180deg)',
-        'transform-origin': 'center center',
-        top: (this.rectangle.y + this.rectangle.height) * this.zoom + 10  + 'px',
-        left: ((this.rectangle.x + (this.rectangle.width / 2)) * this.zoom - (this.WIDTH / 2)) + 'px'
+        bottom: (this.rectangle.y + this.rectangle.height) * this.zoom + 10 + 'px',
+        right: ((this.rectangle.x + (this.rectangle.width / 2)) * this.zoom - (this.WIDTH / 2)) + 'px'
       };
     } else if (this.rotate === 270) {
       return {
-        transform: 'rotate(-270deg)',
-        'transform-origin': 'top left',
-        top: (this.rectangle.y + (this.rectangle.height / 2)) * this.zoom - (this.WIDTH / 2) + 'px',
-        left: (this.rectangle.x + (this.rectangle.width)) * this.zoom + this.HEIGHT + 'px'
+        bottom: (this.rectangle.x + this.rectangle.width) * this.zoom + 10 + 'px',
+        left: ((this.rectangle.y + (this.rectangle.height / 2)) * this.zoom) - (this.WIDTH / 2) + 'px'
       };
     }
   }

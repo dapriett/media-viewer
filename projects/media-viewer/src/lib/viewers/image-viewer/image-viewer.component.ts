@@ -1,4 +1,14 @@
-import {Component, ElementRef, Input, OnChanges, OnDestroy, OnInit, SimpleChanges, ViewChild} from '@angular/core';
+import {
+  Component,
+  ComponentFactoryResolver,
+  ElementRef, EmbeddedViewRef,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  SimpleChanges,
+  ViewChild, ViewContainerRef
+} from '@angular/core';
 import {Subject, Subscription} from 'rxjs';
 import {
   DownloadOperation,
@@ -15,6 +25,8 @@ import { AnnotationSet } from '../../annotations/annotation-set/annotation-set.m
 import { Rectangle } from '../../annotations/annotation-set/annotation/rectangle/rectangle.model';
 import uuid from 'uuid/v4';
 import {ToolbarEventsService} from '../../shared/toolbar-events.service';
+import {PdfJsWrapperFactory} from '../pdf-viewer/pdf-js/pdf-js-wrapper.provider';
+import {AnnotationSetComponent} from '../../annotations/annotation-set/annotation-set.component';
 
 @Component({
     selector: 'mv-image-viewer',
@@ -40,7 +52,10 @@ export class ImageViewerComponent implements OnInit, OnDestroy, OnChanges {
 
   constructor(
     private readonly printService: PrintService,
-    private readonly toolbarEventsService: ToolbarEventsService
+    private readonly toolbarEventsService: ToolbarEventsService,
+    private readonly pdfJsWrapperFactory: PdfJsWrapperFactory,
+    private componentFactoryResolver: ComponentFactoryResolver,
+    private viewContainerRef: ViewContainerRef,
   ) { }
 
   ngOnInit(): void {
@@ -66,13 +81,14 @@ export class ImageViewerComponent implements OnInit, OnDestroy, OnChanges {
   set rotateOperation(operation: RotateOperation | null) {
     if (operation) {
       this.rotation = (this.rotation + operation.rotation + 360) % 360;
+      this.createAnnotationLayer();
     }
   }
 
   @Input()
   set zoomOperation(operation: ZoomOperation | null) {
     if (operation && !isNaN(operation.zoomFactor)) {
-      this.setZoomValue(this.calculateZoomValue(+operation.zoomFactor)).then(() => {});
+      this.setZoomValue(this.calculateZoomValue(+operation.zoomFactor)).then(() => {this.createAnnotationLayer()});
     }
   }
 
@@ -80,7 +96,7 @@ export class ImageViewerComponent implements OnInit, OnDestroy, OnChanges {
   set stepZoomOperation(operation: StepZoomOperation | null) {
     if (operation && !isNaN(operation.zoomFactor)) {
       this.setZoomValue(Math.round(this.calculateZoomValue(this.zoom, operation.zoomFactor) * 10) / 10)
-        .then(() => {});
+        .then(() => {this.createAnnotationLayer()});
     }
   }
 
@@ -122,6 +138,29 @@ export class ImageViewerComponent implements OnInit, OnDestroy, OnChanges {
 
   onLoadError() {
     this.errorMessage = `Could not load the image "${this.url}"`;
+  }
+
+  onLoad() {
+    this.createAnnotationLayer();
+  }
+
+  createAnnotationLayer() {
+    const old = this.img.nativeElement.parentNode.querySelector('mv-annotation-set');
+    if (old) {
+      old.remove();
+    }
+    const factory = this.componentFactoryResolver.resolveComponentFactory(AnnotationSetComponent);
+    const component = this.viewContainerRef.createComponent(factory);
+    component.instance.annotationSet = this.annotationSet;
+    component.instance.zoom = this.zoom;
+    component.instance.page = 1;
+    component.instance.rotate = this.rotation;
+    component.instance.width = (this.rotation % 180 === 0 ?
+      this.img.nativeElement.clientWidth : this.img.nativeElement.clientHeight) * this.zoom;
+    component.instance.height = (this.rotation % 180 === 0 ?
+      this.img.nativeElement.clientHeight : this.img.nativeElement.clientWidth) * this.zoom;
+    const annotationsElement = (component.hostView as EmbeddedViewRef<any>).rootNodes[0] as HTMLElement;
+    this.img.nativeElement.parentNode.appendChild(annotationsElement);
   }
 
 }

@@ -1,15 +1,16 @@
-<div [ngDraggable]="draggable"
-     ngResizable
-     rzHandles="all"
-     class="rectangle"
-     [ngClass]="{ 'selected': selected }"
-     [style.backgroundColor]="'#' + color"
-     [style.width]="rectangle.width * zoom + 'px'"
-     [style.height]="rectangle.height * zoom + 'px'"
-     [position]="{ x: rectangle.x * zoom, y: rectangle.y * zoom }"
-     (stopped)="onMove($event)"
-     (rzStop)="onResize($event)"
-     (click)="onClick()">
+<div [ngStyle]="position()"
+     (stopped)="onMove($event)" class="rectangle" style="height: 0; width: 0;">
+  <div ngResizable
+       rzHandles="all"
+       [ngClass]="{ 'selected': selected }"
+       [style.backgroundColor]="'#' + color"
+       [style.width]="rectangle.width * zoom + 'px'"
+       [style.height]="rectangle.height * zoom + 'px'"
+       [style.transform]="'rotate('+rotate+'deg)'"
+       [style.transform-origin]="'top left'"
+       (rzStop)="onResize($event)"
+       (click)="onClick()">
+  </div>
 </div>
 <mv-popup-toolbar
   *ngIf="selected"
