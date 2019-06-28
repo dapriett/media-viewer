@@ -156,9 +156,9 @@ export class ImageViewerComponent implements OnInit, OnDestroy, OnChanges {
     component.instance.page = 1;
     component.instance.rotate = this.rotation;
     component.instance.width = (this.rotation % 180 === 0 ?
-      this.img.nativeElement.clientWidth : this.img.nativeElement.clientHeight) * this.zoom;
+      this.img.nativeElement.clientWidth : this.img.nativeElement.clientHeight);
     component.instance.height = (this.rotation % 180 === 0 ?
-      this.img.nativeElement.clientHeight : this.img.nativeElement.clientWidth) * this.zoom;
+      this.img.nativeElement.clientHeight : this.img.nativeElement.clientWidth);
     const annotationsElement = (component.hostView as EmbeddedViewRef<any>).rootNodes[0] as HTMLElement;
     this.img.nativeElement.parentNode.appendChild(annotationsElement);
   }
