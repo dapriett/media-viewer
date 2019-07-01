@@ -1,14 +1,11 @@
 <div [ngStyle]="position()"
      (stopped)="onMove($event)" class="rectangle" style="height: 0; width: 0;">
-  <div ngResizable
-       rzHandles="all"
-       [ngClass]="{ 'selected': selected }"
+  <div [ngClass]="{ 'selected': selected }"
        [style.backgroundColor]="'#' + color"
        [style.width]="rectangle.width * zoom + 'px'"
        [style.height]="rectangle.height * zoom + 'px'"
        [style.transform]="'rotate('+rotate+'deg)'"
        [style.transform-origin]="'top left'"
-       (rzStop)="onResize($event)"
        (click)="onClick()">
   </div>
 </div>

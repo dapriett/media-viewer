@@ -1,6 +1,5 @@
 import {Component, ElementRef, EventEmitter, Input, Output} from '@angular/core';
 import { Rectangle } from './rectangle.model';
-import { IResizeEvent } from 'angular2-draggable/lib/models/resize-event';
 
 @Component({
   selector: 'mv-anno-rectangle',
@@ -30,13 +29,6 @@ export class RectangleComponent {
 
     this.rectangle.x = +left / this.zoom;
     this.rectangle.y = +top / this.zoom;
-
-    this.update.emit(this.rectangle);
-  }
-
-  onResize(event: IResizeEvent) {
-    this.rectangle.width = event.size.width / this.zoom;
-    this.rectangle.height = event.size.height / this.zoom;
 
     this.update.emit(this.rectangle);
   }
