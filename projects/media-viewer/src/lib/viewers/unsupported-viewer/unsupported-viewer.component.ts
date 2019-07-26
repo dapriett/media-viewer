@@ -1,6 +1,7 @@
-import { Component, ElementRef, Input, OnInit, ViewChild, OnDestroy, Output, EventEmitter } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { ToolbarEventService } from '../../toolbar/toolbar-event.service';
 import { Subscription } from 'rxjs';
+import { DownloadService } from '../../download.service';
 
 @Component({
   selector: 'mv-unsupported-viewer',
@@ -15,26 +16,25 @@ export class UnsupportedViewerComponent implements OnInit, OnDestroy {
 
   @Output() loadStatus = new EventEmitter<string>();
 
-  @ViewChild('downloadLink') downloadLink: ElementRef;
-
   private subscriptions: Subscription[] = [];
 
   constructor(
-    public readonly toolbarEvents: ToolbarEventService
+    public readonly toolbarEvents: ToolbarEventService,
+    public readonly downloadService: DownloadService
   ) {}
 
   public ngOnInit(): void {
     this.subscriptions.push(
-      this.toolbarEvents.download.subscribe(() => this.downloadLink.nativeElement.click())
+      this.toolbarEvents.download.subscribe(async () => await this.downloadFile())
     );
     this.loadStatus.emit("UNSUPPORTED");
   }
 
   ngOnDestroy(): void {
-    // Clean up any subscriptions that we may have
-    for (const subscription of this.subscriptions) {
-      subscription.unsubscribe();
-    }
+    this.subscriptions.forEach(subscription => subscription.unsubscribe());
   }
 
+  async downloadFile() {
+    await this.downloadService.downloadFile(this.url, this.downloadFileName);
+  }
 }

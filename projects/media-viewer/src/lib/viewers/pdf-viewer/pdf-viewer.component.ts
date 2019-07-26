@@ -20,6 +20,7 @@ import { PrintService } from '../../print.service';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { ViewerEventService } from '../viewer-event.service';
 import { PdfAnnotationService } from './pdf-annotation-service';
+import { DownloadService } from '../../download.service';
 
 @Component({
   selector: 'mv-pdf-viewer',
@@ -43,7 +44,6 @@ export class PdfViewerComponent implements AfterContentInit, OnChanges, OnDestro
 
   loadingDocument = false;
   loadingDocumentProgress: number;
-  errorMessage: string;
 
   @ViewChild('viewerContainer') viewerContainer: ElementRef;
   @ViewChild('pdfViewer') pdfViewer: ElementRef;
@@ -51,10 +51,13 @@ export class PdfViewerComponent implements AfterContentInit, OnChanges, OnDestro
   private pdfWrapper: PdfJsWrapper;
   private subscriptions: Subscription[] = [];
 
+  errorMessage: string;
+
   constructor(
     private readonly pdfJsWrapperFactory: PdfJsWrapperFactory,
     private readonly viewContainerRef: ViewContainerRef,
     private readonly printService: PrintService,
+    private readonly downloadService: DownloadService,
     private readonly toolbarEvents: ToolbarEventService,
     private readonly viewerEvents: ViewerEventService,
     private readonly annotationService: PdfAnnotationService
@@ -73,8 +76,8 @@ export class PdfViewerComponent implements AfterContentInit, OnChanges, OnDestro
     this.annotationService.init(this.pdfWrapper, this.pdfViewer);
 
     this.subscriptions.push(
-      this.toolbarEvents.print.subscribe(() => this.printService.printDocumentNatively(this.url)),
-      this.toolbarEvents.download.subscribe(() => this.pdfWrapper.downloadFile(this.url, this.downloadFileName)),
+      this.toolbarEvents.print.subscribe(async () => await this.printService.printDocumentNatively(this.url)),
+      this.toolbarEvents.download.subscribe(() => this.downloadService.downloadFile(this.url, this.downloadFileName)),
       this.toolbarEvents.rotate.subscribe(rotation => this.pdfWrapper.rotate(rotation)),
       this.toolbarEvents.zoom.subscribe(zoom => this.pdfWrapper.setZoom(zoom)),
       this.toolbarEvents.stepZoom.subscribe(zoom => this.pdfWrapper.stepZoom(zoom)),

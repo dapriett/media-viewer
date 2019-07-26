@@ -5,9 +5,14 @@ import { Injectable } from '@angular/core';
 })
 export class PrintService {
 
-  printDocumentNatively(url: string): void {
-    const printWindow = window.open(url);
-    printWindow.print();
+  async printDocumentNatively(documentUrl: string): Promise<void> {
+    const document = await fetch(documentUrl, {
+      method: 'GET'
+    });
+    const data = await document.blob();
+    const printUrl = window.URL.createObjectURL(data);
+    window.open(printUrl)
+          .print();
   }
 
   printElementNatively(element: HTMLElement, width: number, height: number): void {

@@ -2,8 +2,7 @@
   <div *ngIf="!errorMessage"
        id="image-container"
        class="image-container">
-    <img #img *ngIf="url"
-         [src]="url"
+    <img #img *ngIf="url" [src]="url"
          [ngClass]="'rot' + rotation"
          data-hook="dm.viewer.img"
          (error)="onLoadError()"

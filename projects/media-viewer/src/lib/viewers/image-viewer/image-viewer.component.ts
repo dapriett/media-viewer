@@ -13,6 +13,7 @@ import { Subscription } from 'rxjs';
 import { PrintService } from '../../print.service';
 import { AnnotationSet } from '../../annotations/annotation-set/annotation-set.model';
 import { ToolbarEventService } from '../../toolbar/toolbar-event.service';
+import { DownloadService } from '../../download.service';
 
 @Component({
     selector: 'mv-image-viewer',
@@ -29,16 +30,18 @@ export class ImageViewerComponent implements OnInit, OnDestroy, OnChanges {
 
   @Output() imageLoadStatus = new EventEmitter<string>();
 
-  errorMessage: string;
-
   @ViewChild('img') img: ElementRef;
+
   rotation = 0;
   zoom = 1;
+
+  errorMessage: string;
 
   private subscriptions: Subscription[] = [];
 
   constructor(
     private readonly printService: PrintService,
+    private readonly downloadService: DownloadService,
     public readonly toolbarEvents: ToolbarEventService
   ) { }
 
@@ -47,8 +50,8 @@ export class ImageViewerComponent implements OnInit, OnDestroy, OnChanges {
       this.toolbarEvents.rotate.subscribe(rotation => this.setRotation(rotation)),
       this.toolbarEvents.zoom.subscribe(zoom => this.setZoom(zoom)),
       this.toolbarEvents.stepZoom.subscribe(zoom => this.stepZoom(zoom)),
-      this.toolbarEvents.print.subscribe(() => this.printService.printDocumentNatively(this.url)),
-      this.toolbarEvents.download.subscribe(() => this.download()),
+      this.toolbarEvents.print.subscribe(async () => await this.printService.printDocumentNatively(this.url)),
+      this.toolbarEvents.download.subscribe(() => this.downloadService.downloadFile(this.url, this.downloadFileName)),
     );
   }
 
@@ -85,13 +88,19 @@ export class ImageViewerComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   private download() {
-    const a = document.createElement('a');
-    document.body.appendChild(a);
-    a.setAttribute('style', 'display: none');
-    a.href = this.url;
-    a.download = this.downloadFileName;
-    a.click();
-    a.remove();
+    fetch(this.url, {
+      method: 'GET'
+    })
+      .then(response => response.blob())
+      .then(blob => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = this.downloadFileName;
+        document.body.appendChild(a); // we need to append the element to the dom -> otherwise it will not work in firefox
+        a.click();
+        a.remove();  //afterwards we remove the element again
+      });
   }
 
   // the returned promise is a work-around

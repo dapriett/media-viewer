@@ -16,10 +16,10 @@ import { Comment } from '../../../projects/media-viewer/src/lib/annotations/anno
 })
 export class MediaViewerWrapperComponent {
 
-  pdfUrl = 'assets/example.pdf';
-  imageUrl = 'assets/example.jpg';
-  unsupportedUrl = 'assets/unsupported.txt';
-  filename = 'filename';
+  pdfUrl = 'assets/documents/example.pdf';
+  imageUrl = 'assets/documents/example.jpg';
+  unsupportedUrl = 'assets/documents/unsupported.txt';
+  filename = 'document';
   unsupportedType = 'txt';
 
   selectedTab = 'pdf';

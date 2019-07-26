@@ -61,10 +61,6 @@ export class PdfJsWrapper {
 
   }
 
-  public downloadFile(url: string, filename: string): void {
-    this.downloadManager.downloadUrl(url, filename);
-  }
-
   public setPageNumber(pageNumber: number): void {
     this.pdfViewer.currentPageNumber = pageNumber;
   }
