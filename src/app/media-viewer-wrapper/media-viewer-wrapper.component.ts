@@ -8,7 +8,7 @@ import {
 } from '../../../projects/media-viewer/src/lib/toolbar/toolbar-button-visibility.service';
 import { AnnotationSet } from '../../../projects/media-viewer/src/lib/annotations/annotation-set/annotation-set.model';
 import { Component } from '@angular/core';
-import { Comment } from '../../../projects/media-viewer/src/lib/annotations/annotation-set/annotation/comment/comment.model';
+import { Comment } from '../../../projects/media-viewer/src/lib/annotations/comment-set/comment/comment.model';
 
 @Component({
   selector: 'media-viewer-wrapper',
