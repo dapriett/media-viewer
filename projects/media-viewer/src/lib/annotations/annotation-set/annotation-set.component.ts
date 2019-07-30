@@ -8,6 +8,7 @@ import { ToolbarEventService } from '../../toolbar/toolbar-event.service';
 import { Highlight, ViewerEventService } from '../../viewers/viewer-event.service';
 import { Subscription } from 'rxjs';
 import { PageEvent } from '../../viewers/pdf-viewer/pdf-js/pdf-js-wrapper';
+import { AnnotationService } from '../annotation.service';
 
 @Component({
   selector: 'mv-annotation-set',
@@ -26,7 +27,7 @@ export class AnnotationSetComponent implements OnInit, OnDestroy {
   @ViewChild('newRectangle') newRectangle: ElementRef;
   @ViewChild('container') container: ElementRef;
 
-  selectedAnnotation;
+  selectedAnnotationId;
   drawStartX = -1;
   drawStartY = -1;
 
@@ -35,13 +36,15 @@ export class AnnotationSetComponent implements OnInit, OnDestroy {
   constructor(
     private readonly api: AnnotationApiService,
     public readonly toolbarEvents: ToolbarEventService,
-    private readonly viewerEvents: ViewerEventService
+    private readonly viewerEvents: ViewerEventService,
+    private readonly annotationService: AnnotationService
   ) {}
 
   ngOnInit(): void {
     console.log('init annotation-set');
     this.subscriptions.push(this.viewerEvents.highlightedText.subscribe((highlight) => this.createRectangles(highlight)));
     this.subscriptions.push(this.viewerEvents.highlightedShape.subscribe((highlight) => this.onMouseDown(highlight.event)));
+    this.subscriptions.push(this.annotationService.selectedAnnotation.subscribe((annotationId) => this.selectedAnnotationId = annotationId));
   }
 
   ngOnDestroy(): void {
@@ -55,6 +58,10 @@ export class AnnotationSetComponent implements OnInit, OnDestroy {
     this.width = this.rotate % 180 === 0 ? element.clientWidth : element.clientHeight;
     this.height = this.rotate % 180 === 0 ? element.clientHeight : element.clientWidth;
     element.appendChild(this.container.nativeElement);
+  }
+
+  onAnnotationClick(annotationId) {
+    this.annotationService.onAnnotationSelection(annotationId);
   }
 
   async createRectangles(highlight: Highlight) {
@@ -131,7 +138,7 @@ export class AnnotationSetComponent implements OnInit, OnDestroy {
     };
     console.log('creating annotation');
     this.api.postAnnotation(annotation).subscribe(a => this.annotationSet.annotations.push(a));
-    this.selectedAnnotation = annotation.id;
+    this.selectedAnnotationId = annotation.id;
   }
 
   public getAnnotationsOnPage(): Annotation[] {
@@ -145,7 +152,7 @@ export class AnnotationSetComponent implements OnInit, OnDestroy {
         const index = this.annotationSet.annotations.findIndex(a => a.id === newAnnotation.id);
 
         this.annotationSet.annotations[index] = newAnnotation;
-        this.selectedAnnotation = newAnnotation.id;
+        this.selectedAnnotationId = newAnnotation.id;
       });
   }
 
@@ -154,7 +161,7 @@ export class AnnotationSetComponent implements OnInit, OnDestroy {
       .deleteAnnotation(annotation.id)
       .subscribe(() => {
         this.annotationSet.annotations = this.annotationSet.annotations.filter(a => a.id !== annotation.id);
-        this.selectedAnnotation = -1;
+        this.selectedAnnotationId = -1;
       });
   }
 
@@ -196,7 +203,7 @@ export class AnnotationSetComponent implements OnInit, OnDestroy {
           .subscribe(a => this.annotationSet.annotations.push(a));
 
         this.toolbarEvents.drawMode.next(false);
-        this.selectedAnnotation = annotation.id;
+        this.selectedAnnotationId = annotation.id;
       }
       this.resetNewRect();
     }
