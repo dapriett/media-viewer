@@ -8,7 +8,7 @@ import { ToolbarEventService } from '../../toolbar/toolbar-event.service';
 import { Highlight, ViewerEventService } from '../../viewers/viewer-event.service';
 import { Subscription } from 'rxjs';
 import { PageEvent } from '../../viewers/pdf-viewer/pdf-js/pdf-js-wrapper';
-import { AnnotationService } from '../annotation.service';
+import { AnnotationService, SelectionAnnotation } from '../annotation.service';
 
 @Component({
   selector: 'mv-annotation-set',
@@ -27,7 +27,7 @@ export class AnnotationSetComponent implements OnInit, OnDestroy {
   @ViewChild('newRectangle') newRectangle: ElementRef;
   @ViewChild('container') container: ElementRef;
 
-  selectedAnnotationId;
+  selectedAnnotation: SelectionAnnotation = { annotationId: '', editable: false };
   drawStartX = -1;
   drawStartY = -1;
 
@@ -44,7 +44,7 @@ export class AnnotationSetComponent implements OnInit, OnDestroy {
     console.log('init annotation-set');
     this.subscriptions.push(this.viewerEvents.highlightedText.subscribe((highlight) => this.createRectangles(highlight)));
     this.subscriptions.push(this.viewerEvents.highlightedShape.subscribe((highlight) => this.onMouseDown(highlight.event)));
-    this.subscriptions.push(this.annotationService.selectedAnnotation.subscribe((annotationId) => this.selectedAnnotationId = annotationId));
+    this.subscriptions.push(this.annotationService.selectedAnnotation.subscribe((selectedAnnotation) => this.selectedAnnotation = selectedAnnotation));
   }
 
   ngOnDestroy(): void {
@@ -138,7 +138,7 @@ export class AnnotationSetComponent implements OnInit, OnDestroy {
     };
     console.log('creating annotation');
     this.api.postAnnotation(annotation).subscribe(a => this.annotationSet.annotations.push(a));
-    this.selectedAnnotationId = annotation.id;
+    this.onAnnotationClick({ annotationId: annotation.id, editable: false });
   }
 
   public getAnnotationsOnPage(): Annotation[] {
@@ -152,7 +152,7 @@ export class AnnotationSetComponent implements OnInit, OnDestroy {
         const index = this.annotationSet.annotations.findIndex(a => a.id === newAnnotation.id);
 
         this.annotationSet.annotations[index] = newAnnotation;
-        this.selectedAnnotationId = newAnnotation.id;
+        this.onAnnotationClick({ annotationId: annotation.id, editable: false });
       });
   }
 
@@ -161,7 +161,7 @@ export class AnnotationSetComponent implements OnInit, OnDestroy {
       .deleteAnnotation(annotation.id)
       .subscribe(() => {
         this.annotationSet.annotations = this.annotationSet.annotations.filter(a => a.id !== annotation.id);
-        this.selectedAnnotationId = -1;
+        this.onAnnotationClick({ annotationId: '', editable: false });
       });
   }
 
@@ -203,7 +203,7 @@ export class AnnotationSetComponent implements OnInit, OnDestroy {
           .subscribe(a => this.annotationSet.annotations.push(a));
 
         this.toolbarEvents.drawMode.next(false);
-        this.selectedAnnotationId = annotation.id;
+        this.onAnnotationClick({ annotationId: annotation.id, editable: false });
       }
       this.resetNewRect();
     }
