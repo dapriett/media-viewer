@@ -32,6 +32,7 @@ export class ImageViewerComponent implements OnInit, OnDestroy, OnChanges {
   errorMessage: string;
 
   @ViewChild('img') img: ElementRef;
+
   rotation = 0;
   zoom = 1;
 
@@ -112,10 +113,10 @@ export class ImageViewerComponent implements OnInit, OnDestroy, OnChanges {
 
   onLoadError() {
     this.errorMessage = `Could not load the image "${this.url}"`;
-    this.imageLoadStatus.emit("FAILURE");
+    this.imageLoadStatus.emit('FAILURE');
   }
 
   onLoad() {
-    this.imageLoadStatus.emit("SUCCESS");
+    this.imageLoadStatus.emit('SUCCESS');
   }
 }

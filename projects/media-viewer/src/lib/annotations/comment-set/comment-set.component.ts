@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import {Component, ElementRef, Input, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren} from '@angular/core';
 import { AnnotationSet } from '../annotation-set/annotation-set.model';
 import { Annotation } from '../annotation-set/annotation/annotation.model';
 import { AnnotationApiService } from '../annotation-api.service';
@@ -12,18 +12,20 @@ import { AnnotationService, SelectionAnnotation } from '../annotation.service';
   templateUrl: './comment-set.component.html',
   styleUrls: ['./comment-set.component.css']
 })
-export class CommentSetComponent implements OnInit {
+export class CommentSetComponent implements OnInit, OnDestroy {
 
   @Input() annotationSet: AnnotationSet;
   @Input() page: number;
   @Input() zoom: number;
   @Input() rotate: number;
+  @Input() commentHeight: number;
 
   comments: Comment[];
   selectAnnotation: SelectionAnnotation = { annotationId: '', editable: false };
 
   @ViewChild('container') container: ElementRef;
   @ViewChildren('commentComponent') commentComponents: QueryList<CommentComponent>;
+  @ViewChild('rightPanel') rightPanel: ElementRef;
 
   constructor(private readonly api: AnnotationApiService,
               private readonly annotationService: AnnotationService) { }
@@ -128,11 +130,19 @@ export class CommentSetComponent implements OnInit {
   isOverlapping(commentItem: CommentComponent, previousCommentItem: CommentComponent): CommentComponent {
     commentItem.commentTopPos = commentItem._rectangle.y;
     if (previousCommentItem) {
-      const endOfPreviousCommentItem = (previousCommentItem.commentTopPos + previousCommentItem.form.nativeElement.getBoundingClientRect().height);
+      const endOfPreviousCommentItem =
+        (previousCommentItem.commentTopPos + previousCommentItem.form.nativeElement.getBoundingClientRect().height);
       if (commentItem.commentTopPos <= endOfPreviousCommentItem) {
         commentItem.commentTopPos = endOfPreviousCommentItem;
       }
     }
     return commentItem;
+  }
+
+  @Input()
+  set viewerScrollTop(scrollTop: number) {
+    if (this.rightPanel) {
+      this.rightPanel.nativeElement.scrollTop = scrollTop;
+    }
   }
 }
