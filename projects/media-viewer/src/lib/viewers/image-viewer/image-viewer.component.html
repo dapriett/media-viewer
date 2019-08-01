@@ -1,5 +1,5 @@
 <div id="viewer-wrapper" *ngIf="url && !errorMessage">
-  <div class="split left" #leftPanel>
+  <div class="split left" #leftPanel (scroll)="rightPanel.scrollTop = leftPanel.scrollTop">
     <div id="image-container"
          class="image-container">
       <img #img
@@ -18,13 +18,14 @@
       </mv-annotation-set>
     </div>
   </div>
+  <div #rightPanel class="split right">
     <mv-comment-set *ngIf="enableAnnotations && annotationSet"
                     [annotationSet]="annotationSet"
                     [page]="1"
                     [zoom]="zoom"
                     [commentHeight]="img.offsetHeight"
-                    [viewerScrollTop]="leftPanel.scrollTop"
                     [rotate]="rotation">
     </mv-comment-set>
+  </div>
 </div>
 <mv-error-message *ngIf="errorMessage" [errorMessage]="errorMessage"></mv-error-message>
