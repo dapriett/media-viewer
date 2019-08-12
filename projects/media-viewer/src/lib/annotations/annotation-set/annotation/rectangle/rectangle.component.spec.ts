@@ -2,7 +2,6 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { RectangleComponent } from './rectangle.component';
 import { FormsModule } from '@angular/forms';
-import { AngularDraggableModule } from 'angular2-draggable';
 
 describe('RectangleComponent', () => {
   let component: RectangleComponent;
@@ -31,14 +30,32 @@ describe('RectangleComponent', () => {
       y: 10,
   };
 
+  const mockHtmlElement : any = {
+      style : {
+        top : '0px',
+        left : '300px',
+        transform: {
+          match(regex: any) :string {
+            return '300,0';
+          }
+        }
+      }
+  };
+
+  const mockIResizeEvent : any = {
+      size : {
+        width : 50,
+        height : 50
+      }
+  };
+
   beforeEach(async(() => {
     return TestBed.configureTestingModule({
       declarations: [
         RectangleComponent,
       ],
       imports: [
-        FormsModule,
-        AngularDraggableModule,
+        FormsModule
       ],
       schemas: [
         CUSTOM_ELEMENTS_SCHEMA,
@@ -51,6 +68,8 @@ describe('RectangleComponent', () => {
     fixture = TestBed.createComponent(RectangleComponent);
     component = fixture.componentInstance;
     component.rectangle = mockRectangle;
+    component.zoom = 1;
+    component.selected = false;
     nativeElement = fixture.debugElement.nativeElement;
     fixture.detectChanges();
   });
@@ -65,4 +84,13 @@ describe('RectangleComponent', () => {
 
     expect(clickEmitEventSpy).toHaveBeenCalledTimes(1);
   });
+
+  it('should select the rectangle if select is true.', () => {
+    component.selected = true;
+
+    setTimeout(() => {
+      expect(component.rectElement.nativeElement.focus).toHaveBeenCalledTimes(1);
+    }, 1);
+  });
+
 });

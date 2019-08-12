@@ -79,7 +79,6 @@ export class PdfViewerComponent implements AfterContentInit, OnChanges, OnDestro
       this.toolbarEvents.zoom.subscribe(zoom => this.pdfWrapper.setZoom(zoom)),
       this.toolbarEvents.stepZoom.subscribe(zoom => this.pdfWrapper.stepZoom(zoom)),
       this.toolbarEvents.search.subscribe(search => this.pdfWrapper.search(search)),
-      this.toolbarEvents.setCurrentPage.subscribe(pageNumber => this.pdfWrapper.setPageNumber(pageNumber)),
       this.toolbarEvents.changePageByDelta.subscribe(pageNumber => this.pdfWrapper.changePageNumber(pageNumber))
     );
     await this.loadDocument();
@@ -93,7 +92,7 @@ export class PdfViewerComponent implements AfterContentInit, OnChanges, OnDestro
 
   ngOnDestroy(): void {
     this.subscriptions.forEach(subscription => subscription.unsubscribe());
-    this.annotationService.destroy();
+    this.annotationService.destroyComponents();
   }
 
   private async loadDocument() {

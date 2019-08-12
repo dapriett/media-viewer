@@ -8,6 +8,7 @@ import { ToolbarEventService } from '../../toolbar/toolbar-event.service';
 import { Highlight, ViewerEventService } from '../../viewers/viewer-event.service';
 import { Subscription } from 'rxjs';
 import { PageEvent } from '../../viewers/pdf-viewer/pdf-js/pdf-js-wrapper';
+import { AnnotationService, SelectionAnnotation } from '../annotation.service';
 
 @Component({
   selector: 'mv-annotation-set',
@@ -26,7 +27,7 @@ export class AnnotationSetComponent implements OnInit, OnDestroy {
   @ViewChild('newRectangle') newRectangle: ElementRef;
   @ViewChild('container') container: ElementRef;
 
-  selectedAnnotation;
+  selectedAnnotation: SelectionAnnotation = { annotationId: '', editable: false };
   drawStartX = -1;
   drawStartY = -1;
 
@@ -35,13 +36,16 @@ export class AnnotationSetComponent implements OnInit, OnDestroy {
   constructor(
     private readonly api: AnnotationApiService,
     public readonly toolbarEvents: ToolbarEventService,
-    private readonly viewerEvents: ViewerEventService
+    private readonly viewerEvents: ViewerEventService,
+    private readonly annotationService: AnnotationService
   ) {}
 
   ngOnInit(): void {
     console.log('init annotation-set');
     this.subscriptions.push(this.viewerEvents.highlightedText.subscribe((highlight) => this.createRectangles(highlight)));
     this.subscriptions.push(this.viewerEvents.highlightedShape.subscribe((highlight) => this.onMouseDown(highlight.event)));
+    this.subscriptions.push(this.annotationService.getSelectedAnnotation()
+      .subscribe((selectedAnnotation) => this.selectedAnnotation = selectedAnnotation));
   }
 
   ngOnDestroy(): void {
@@ -57,9 +61,13 @@ export class AnnotationSetComponent implements OnInit, OnDestroy {
     element.appendChild(this.container.nativeElement);
   }
 
+  onAnnotationClick(annotationId) {
+    this.annotationService.onAnnotationSelection(annotationId);
+  }
+
   async createRectangles(highlight: Highlight) {
     if (highlight.page === this.page) {
-      if (window.getSelection) {
+      if (window.getSelection()) {
         const selection = window.getSelection();
 
         if (selection.rangeCount && !selection.isCollapsed) {
@@ -72,14 +80,12 @@ export class AnnotationSetComponent implements OnInit, OnDestroy {
 
             const selectionRectangles: Rectangle[] = [];
             for (let i = 0; i < clientRects.length; i++) {
-              selectionRectangles.push(
-                this.createRectangle(clientRects[i], textLayerRect)
-              );
+              const selectionRectangle = this.createRectangle(clientRects[i], textLayerRect);
+              selectionRectangles.push(selectionRectangle);
             }
             await this.createAnnotation(selectionRectangles);
-
-            const selectedText = window.getSelection();
-            selectedText.removeAllRanges();
+            selection.removeAllRanges();
+            this.toolbarEvents.highlightMode.next(false);
           }
         }
       }
@@ -97,8 +103,6 @@ export class AnnotationSetComponent implements OnInit, OnDestroy {
 
     switch (this.rotate) {
       case 90:
-        rectangle.width = (rect.bottom - rect.top) / this.zoom;
-        rectangle.height = (rect.right - rect.left) / this.zoom;
         rectangle.x = (rect.top - textLayerRect.top) / this.zoom;
         rectangle.y = ((this.height - (rect.left - textLayerRect.left)) / this.zoom) - rectangle.height;
         break;
@@ -119,23 +123,24 @@ export class AnnotationSetComponent implements OnInit, OnDestroy {
     return rectangle as Rectangle;
   }
 
-  private createAnnotation(rectangle: Rectangle[]): void {
+  private createAnnotation(rectangles: Rectangle[]): void {
     const annotation = {
         id: uuid(),
         annotationSetId: this.annotationSet.id,
         color: 'FFFF00',
         comments: [],
         page: this.page,
-        rectangles: rectangle,
+        rectangles: rectangles,
         type: 'highlight'
     };
-    console.log('creating annotation');
     this.api.postAnnotation(annotation).subscribe(a => this.annotationSet.annotations.push(a));
-    this.selectedAnnotation = annotation.id;
+    this.onAnnotationClick({ annotationId: annotation.id, editable: false });
   }
 
   public getAnnotationsOnPage(): Annotation[] {
-    return this.annotationSet.annotations.filter(a => a.page === this.page);
+    if (this.annotationSet) {
+      return this.annotationSet.annotations.filter(a => a.page === this.page);
+    }
   }
 
   public onAnnotationUpdate(annotation: Annotation) {
@@ -145,7 +150,7 @@ export class AnnotationSetComponent implements OnInit, OnDestroy {
         const index = this.annotationSet.annotations.findIndex(a => a.id === newAnnotation.id);
 
         this.annotationSet.annotations[index] = newAnnotation;
-        this.selectedAnnotation = newAnnotation.id;
+        this.onAnnotationClick({ annotationId: annotation.id, editable: false });
       });
   }
 
@@ -154,7 +159,7 @@ export class AnnotationSetComponent implements OnInit, OnDestroy {
       .deleteAnnotation(annotation.id)
       .subscribe(() => {
         this.annotationSet.annotations = this.annotationSet.annotations.filter(a => a.id !== annotation.id);
-        this.selectedAnnotation = -1;
+        this.onAnnotationClick({ annotationId: '', editable: false });
       });
   }
 
@@ -196,7 +201,7 @@ export class AnnotationSetComponent implements OnInit, OnDestroy {
           .subscribe(a => this.annotationSet.annotations.push(a));
 
         this.toolbarEvents.drawMode.next(false);
-        this.selectedAnnotation = annotation.id;
+        this.onAnnotationClick({ annotationId: annotation.id, editable: false });
       }
       this.resetNewRect();
     }
