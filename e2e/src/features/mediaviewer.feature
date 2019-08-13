@@ -24,3 +24,10 @@ Feature: Media Viewer Test Suite
     Examples:
       | page_number | page_number2 |
       | 2           | 1            |
+
+
+  @EM-1247 @Print_file
+  Scenario: Enable user to print file
+    When the user selects the print option
+    And the user selects the printer
+    Then I expect the file is queued for printing

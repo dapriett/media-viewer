@@ -1,5 +1,6 @@
-import { browser, by, element, Locator, protractor } from 'protractor';
-import { By } from '@angular/platform-browser';
+import {browser, by, element, Locator, protractor} from 'protractor';
+import {By} from '@angular/platform-browser';
+
 const until = protractor.ExpectedConditions;
 
 export class AppPage {
@@ -39,11 +40,17 @@ export class AppPage {
     return await element(by.css('media-viewer-wrapper h2')).getText();
   }
 
-  async selectPdfViewer() { await this.clickElement(by.id('pdf-tab')); }
+  async selectPdfViewer() {
+    await this.clickElement(by.id('pdf-tab'));
+  }
 
-  async selectImageViewer() { await this.clickElement(by.id('image-tab')); }
+  async selectImageViewer() {
+    await this.clickElement(by.id('image-tab'));
+  }
 
-  async selectUnsupportedViewer() { await this.clickElement(by.id('unsupported-tab')); }
+  async selectUnsupportedViewer() {
+    await this.clickElement(by.id('unsupported-tab'));
+  }
 
   async waitForPdfToLoad() {
     await browser.wait(until.presenceOf(element(by.css('div[class="page"'))), 3000, 'PDF viewer taking too long to load');
@@ -62,10 +69,14 @@ export class AppPage {
   }
 
   async selectPDFText() {
-    // const hotkeys = require('protractor-hotkeys');
-    // hotkeys
-    //   .trigger('mod+a');
-    // await this.clickElement(by.xpath('*//div[text()=\'Abstract\']'));
-
+    const textSel = await browser.findElement(by.xpath('//div[contains(text(),\'Abstract\')]'));
+    console.log(await textSel.getText());
+    // const textSel = element(by.xpath('//div[contains(text(),\'Abstract\')]')).getWebElement();
+    console.log('prior to click');
+    await browser.actions().mouseDown(element(by.css('div[class="textLayer"]'))).perform();
+    console.log('after click');
+    await browser.actions().mouseMove(element(by.css('div[class="textLayer"]')), {x: 593, y: 0}).perform();
+    await browser.actions().mouseUp().perform();
+    console.log('after mouseup');
   }
 }

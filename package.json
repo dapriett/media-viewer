@@ -32,7 +32,7 @@
     "clean": "rimraf reports",
     "annotations:stub": "node api/annotation-stubs.js",
     "webdriver": "webdriver-manager update",
-    "e2e:cucumber": "webdriver-manager update && ng e2e --protractor-config e2e/cucumber.conf.js",
+    "e2e:cucumber": "webdriver-manager update=false && ng e2e --protractor-config e2e/cucumber.conf.js",
     "e2e:travis": "webdriver-manager update && ng e2e --protractor-config 'e2e/ci.protractor.conf.js'"
   },
   "dependencies": {
@@ -61,6 +61,7 @@
     "rxjs-compat": "^6.5.1",
     "scss-bundle": "~2.4.0",
     "session-file-store": "^1.2.0",
+    "webdriver-manager": "^12.1.6",
     "zone.js": "~0.8.29"
   },
   "devDependencies": {

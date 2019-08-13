@@ -13,19 +13,13 @@ Feature:  Media Viewer Annotations
     Then I expect text highlight popup should appear
     And I add a comment to the selected PDF text
     Then I check whether the comment has been created
-
-
-  @PDFTextHighlight_Comment
-  Scenario: Add a comment to PDF Text highlight
-    When I select a text on pdf
-    Then I expect text highlight popup should appear
-    And I add a comment to the selected PDF text
-    Then I verify whether the comment has been saved
-
-    @EM-1247 @Print_file
-    Scenario: Enable user to print file
-      When the user selects the print option
-      And the user selects the printer
-      Then I expect the file is queued for printing
+#
+#
+#  @PDFTextHighlight_Comment
+#  Scenario: Add a comment to PDF Text highlight
+#    When I select a text on pdf
+#    Then I expect text highlight popup should appear
+#    And I add a comment to the selected PDF text
+#    Then I verify whether the comment has been saved
 
 
