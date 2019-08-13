@@ -1,4 +1,4 @@
-import { inject, TestBed } from '@angular/core/testing';
+import { ComponentFixture, inject, TestBed } from '@angular/core/testing';
 import { PdfAnnotationService } from './pdf-annotation-service';
 import { ComponentFactoryResolver, ElementRef, ViewContainerRef } from '@angular/core';
 import { ToolbarEventService } from '../../toolbar/toolbar-event.service';
@@ -8,11 +8,18 @@ import { annotationSet } from '../../../assets/annotation-set';
 import { DocumentLoadProgress, PageEvent, PdfJsWrapper } from './pdf-js/pdf-js-wrapper';
 import { Subject } from 'rxjs';
 import { DownloadManager, PDFViewer } from 'pdfjs-dist/web/pdf_viewer';
+import { PdfViewerComponent } from './pdf-viewer.component';
 
 export class MockElementRef extends ElementRef {
+  div = document.createElement('div');
   constructor() {
     super(undefined);
   }
+  nativeElement = {
+    querySelector: () => {
+      return this.div;
+    }
+  };
 }
 
 describe('PdfAnnotationService', () => {
@@ -20,6 +27,9 @@ describe('PdfAnnotationService', () => {
   let factory: ComponentFactoryResolver;
   let toolbarEvent: ToolbarEventService;
   let viewerEventService: ViewerEventService;
+  let pdfViewerComponent: PdfViewerComponent;
+  let pdfWrapper: PdfJsWrapper;
+  let elementRef: ElementRef;
 
   const mockWrapper = {
     loadDocument: () => {},
@@ -45,10 +55,6 @@ describe('PdfAnnotationService', () => {
     pageRendered: new Subject<{pageNumber: number, source: { rotation: number, scale: number, div: Element} }>()
   };
 
-  const mockFactory = {
-    create: () => mockWrapper
-  };
-
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
@@ -57,7 +63,7 @@ describe('PdfAnnotationService', () => {
         ToolbarEventService,
         ViewerEventService,
         ComponentFactoryResolver,
-        { provide: PdfJsWrapperFactory, useValue: mockFactory },
+        PdfViewerComponent,
         { provide: PdfJsWrapper, useValue: mockWrapper },
         { provide: ElementRef, useValue: MockElementRef },
         // { provide: ComponentFactoryResolver, useValue: mockFactoryResolver },
@@ -74,6 +80,9 @@ describe('PdfAnnotationService', () => {
     factory = TestBed.get(ComponentFactoryResolver);
     toolbarEvent = TestBed.get(ToolbarEventService);
     viewerEventService = TestBed.get(ViewerEventService);
+    pdfViewerComponent = TestBed.get(PdfViewerComponent);
+    pdfWrapper = TestBed.get(PdfJsWrapper);
+    elementRef = new MockElementRef();
 
     pdfService.annotationSet = { ...annotationSet };
   });
@@ -82,14 +91,12 @@ describe('PdfAnnotationService', () => {
     expect(service).toBeTruthy();
   }));
 
-  // it('should set the pdf wrapper and pdf viewer', () => {
-  //   spyOn(pdfjsWrapperFactory, 'create').and.callThrough();
-  //   const pdfjsWrapper = pdfjsWrapperFactory.create(new MockElementRef());
-  //   pdfService.init(pdfjsWrapper, new MockElementRef());
-  //
-  //   expect(pdfService.pdfWrapper).not.toBe(undefined);
-  //   expect(pdfService.pdfViewer).not.toBe(undefined);
-  // });
+  it('should initialise pdf wrapper and viewer', () => {
+    pdfService.init(pdfWrapper, pdfViewerComponent.pdfViewer);
+
+    expect(pdfService.pdfWrapper).not.toBeNull();
+    expect(pdfService.pdfViewer).not.toBeNull();
+  });
 
   it('should create the annotation set for the pages with annotations', () => {
     spyOn<any>(pdfService, 'createAnnotationSetComponent');
@@ -139,26 +146,47 @@ describe('PdfAnnotationService', () => {
   //   expect(specificAnnotationSet.instance.initialise).toHaveBeenCalledWith(mockEventSource.source);
   // });
 
-  // it('should call on text selection with the mouse event', () => {
-  //   const mouseEvent = new MouseEvent('click');
-  //   spyOn(toolbarEvent.highlightMode, 'getValue').and.returnValue(true);
-  //   spyOn(mockWrapper, 'getPageNumber');
+  // fit('should initialise annotation set and comment set components', () => {
+  //   spyOn<any>(pdfService, 'setupCommentSet').and.returnValue(commentSetComponent);
+  //   const mockRealElement = document.createElement('div');
+  //   const mockEventSource: PageEvent = {
+  //     pageNumber: 1,
+  //     source: {
+  //       rotation: 0,
+  //       scale: 1,
+  //       div: mockRealElement
+  //     }
+  //   };
   //
-  //   pdfService.onHighlightSelected(mouseEvent);
-  //
-  //   expect(toolbarEvent.highlightMode.getValue).toHaveBeenCalled();
-  //   setTimeout(() => {
-  //     spyOn(viewerEventService, 'onTextSelection').and.callThrough();
-  //     expect(viewerEventService.onTextSelection).toHaveBeenCalledWith({ page: 1, event: mouseEvent});
-  //   }, 1);
+  //   pdfService.onPageRendered(mockEventSource);
   // });
 
-  // it('should highlight the text on selected page', () => {
-  //   const mouseEvent = new MouseEvent('click');
-  //   spyOn(pdfService, 'onHighlightSelected').and.callThrough();
-  //   spyOn(toolbarEvent.highlightMode, 'getValue').and.returnValue(true);
-  //   pdfService.onHighlightSelected(mouseEvent);
-  //
-  //   expect(pdfService.onHighlightSelected).toHaveBeenCalled();
-  // });
+  it('should highlight shape on the selected page', () => {
+    pdfService.init(pdfWrapper, elementRef);
+
+    spyOn(pdfService.pdfWrapper, 'getPageNumber').and.returnValue(1);
+    spyOn(pdfService.pdfWrapper, 'getNormalisedPagesRotation').and.returnValue(0);
+    spyOn(pdfService.pdfWrapper, 'getCurrentPDFZoomValue').and.returnValue(1);
+    spyOn(pdfService.pdfViewer.nativeElement, 'querySelector');
+    spyOn(toolbarEvent.drawMode, 'getValue').and.returnValue(true);
+    const mouseEvent = new MouseEvent('click');
+    pdfService.pages.push(1);
+
+    pdfService.onPageSelected(mouseEvent);
+
+    setTimeout(() => {
+      expect(viewerEventService.onShapeSelection).toHaveBeenCalledWith({ page: 1, event: mouseEvent });
+    }, 1);
+  });
+
+  it('should highlight the text on selected page', () => {
+    const mouseEvent = new MouseEvent('click');
+    spyOn(toolbarEvent.highlightMode, 'getValue').and.returnValue(true);
+    spyOn(viewerEventService, 'onTextSelection').and.callThrough();
+    pdfService.onHighlightSelected(mouseEvent);
+
+    setTimeout(() => {
+      expect(viewerEventService.onTextSelection).toHaveBeenCalledWith({ page: 1, event: mouseEvent });
+    }, 1);
+  });
 });
