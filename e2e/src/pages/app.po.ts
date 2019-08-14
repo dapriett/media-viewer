@@ -119,4 +119,9 @@ export class AppPage {
   async clickOnCommentButton() {
     element(this.commentButton).click();
   }
+
+  async sleep(time: number)  {
+    await browser.sleep(time);
+
+  }
 }

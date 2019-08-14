@@ -84,7 +84,7 @@ When('I select a text on pdf doc', async () => {
   await page.waitForPdfToLoad();
   await toolBar.enableTextHighLightMode();
   await page.highLightTextOnPdfPage();
-  await sleep(10000);
+  await page.sleep(5000);
 
 });
 
@@ -113,11 +113,6 @@ When('I highlight text on a PDF document', async () => {
   await page.waitForPdfToLoad();
   await toolBar.enableTextHighLightMode();
   await page.highLightTextOnPdfPage();
-  await sleep(5000);
+  await page.sleep(5000);
 });
-
-function sleep(time: number) {
-  return new Promise(resolve => setTimeout(resolve, time));
-}
-
 

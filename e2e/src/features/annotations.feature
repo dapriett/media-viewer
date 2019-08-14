@@ -7,22 +7,12 @@ Feature:  Media Viewer Annotations
     When I click Annotate button
     Then I expect Annotate button must be enabled
 
-#  @CreateAnnotation
-#  Scenario: Create Annotations
-#    When I select a text on pdf doc
-#    Then I expect text highlight popup should appear
-#    And I add a comment to the selected PDF text
-#    Then I check whether the comment has been created
-
-
   @PDFTextHighlight @EM-1711
   Scenario: PDF Text highlight
     When I highlight text on a PDF document
     Then I expect text highlight popup should appear
 
-
-
-#  @PDF_Add_Annotation
-#  Scenario: Highlight text and add comment
-#    When I highlight text on a PDF document
-#    Then I should be able to add comment for the highlight
+  @PDF_Add_Annotation
+  Scenario: Highlight text and add comment
+    When I highlight text on a PDF document
+    Then I should be able to add comment for the highlight
