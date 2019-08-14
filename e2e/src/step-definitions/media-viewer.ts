@@ -76,18 +76,21 @@ When('I click Annotate button', async () => {
 });
 
 Then('I expect Annotate button must be enabled', async function () {
-  const screenshots = await browser.takeScreenshot();
-  this.attach(screenshots, 'image/png');
+  const screenshot = await browser.takeScreenshot();
+  this.attach(screenshot, 'image/png');
 });
 
 When('I select a text on pdf doc', async () => {
-  await toolBar.clickTextIcon();
- await browser.sleep(5000);
-  await page.selectPDFText();
+  await page.waitForPdfToLoad();
+  await toolBar.enableTextHighLightMode();
+  await page.highLightTextOnPdfPage();
+  await sleep(10000);
 
 });
 
-Then('I expect text highlight popup should appear', async () => {
+Then('I expect text highlight popup should appear', async function () {
+  const screenshot = await browser.takeScreenshot();
+  this.attach(screenshot, 'image/png');
 });
 
 Then(/^I select a text on pdf$/, async () => {
@@ -108,14 +111,12 @@ Then('I should be able to add comment for the highlight', async () => {
 
 When('I highlight text on a PDF document', async () => {
   await page.waitForPdfToLoad();
-  // await sleep(10000);
   await toolBar.enableTextHighLightMode();
-  // await sleep(5000);
-  await page.highLightTextOnPdfPage("Dynamic languages such as JavaScript are more difficult to com-");
-  // await sleep(5000);
+  await page.highLightTextOnPdfPage();
+  await sleep(5000);
 });
 
-function sleep(time: number){
+function sleep(time: number) {
   return new Promise(resolve => setTimeout(resolve, time));
 }
 

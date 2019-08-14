@@ -4,10 +4,9 @@ import {By} from '@angular/platform-browser';
 const until = protractor.ExpectedConditions;
 
 export class AppPage {
-  
-  
-  commentButton : By = By.css(".toolbar button[title='Comment']");
-  annotationTextArea : By = By.css("textarea");
+
+  commentButton: By = By.css('.toolbar button[title=\'Comment\']');
+  annotationTextArea: By = By.css('textarea');
 
   async navigateTo() {
     await browser.driver.navigate().to(browser.baseUrl);
@@ -83,22 +82,21 @@ export class AppPage {
     await browser.actions().mouseUp().perform();
     console.log('after mouseup');
   }
-  
-   async getClassAttributeOfAnElement(selector : By) : Promise<string[]> {
-    var splitClasses:string[] = [];
+   async getClassAttributeOfAnElement(selector: By): Promise<string[]> {
+    let splitClasses: string[] = [];
     return await element(selector).getAttribute('class').then( (classes) => {
       splitClasses = classes.split(' ');
       return splitClasses;
-    }).catch(() => {return []});
+    }).catch(() => []);
   }
 
-  async highLightTextOnPdfPage(text : string){
+  async highLightTextOnPdfPage() {
     await browser.executeScript(() => {
-      var range = document.createRange();
-      var xpath = "//div[text()='" + text + "']";
-      var matchingElement = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+      const range = document.createRange();
+      // tslint:disable-next-line:max-line-length
+      const matchingElement =   document.evaluate('//div[text()=\'Dynamic languages such as JavaScript are more difficult to com-\']', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
       range.selectNodeContents(matchingElement);
-      var sel = window.getSelection();
+      const sel = window.getSelection();
       sel.removeAllRanges();
       sel.addRange(range);
     });
@@ -106,19 +104,19 @@ export class AppPage {
     this.getHighlightPopUp();
   }
 
-  async getHighlightPopUp(){
+  async getHighlightPopUp() {
     await browser.executeScript(() => {
-      let mousedown = document.createEvent("Event");
-      mousedown.initEvent("mousedown", true, true);
-      let mouseup = document.createEvent("Event");
-      mouseup.initEvent("mouseup", true, true);
-      var pageHandle = document.getElementsByClassName("pdfViewer")[0];
+      const mousedown = document.createEvent('Event');
+      mousedown.initEvent('mousedown', true, true);
+      const mouseup = document.createEvent('Event');
+      mouseup.initEvent('mouseup', true, true);
+      const pageHandle = document.getElementsByClassName('pdfViewer')[0];
       pageHandle.dispatchEvent(mousedown);
       pageHandle.dispatchEvent(mouseup);
     });
   }
 
-  async clickOnCommentButton(){
+  async clickOnCommentButton() {
     element(this.commentButton).click();
   }
 }
