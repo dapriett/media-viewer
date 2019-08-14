@@ -111,7 +111,8 @@ describe('PdfAnnotationService', () => {
 
     const commentSetComponent = pdfService.setupCommentSet(1);
 
-    expect(pdfService.commentSetComponents.length).toEqual(1);
+      expect(pdfService.commentSetComponents.length).toEqual(1);
+      expect(commentSetComponent).not.toBeNull();
   });
 
   it('should destroy all references to any sets and pages', () => {
@@ -121,45 +122,6 @@ describe('PdfAnnotationService', () => {
     expect(pdfService.annotationSetComponents.length).toEqual(0);
     expect(pdfService.pages).toEqual([]);
   });
-
-  // it('should initialise all the set components for the pdf viewer', () => {
-  //   // setup
-  //   spyOn<any>(pdfService, 'createAnnotationSetComponent');
-  //   spyOn<any>(pdfService, 'createCommentSetComponent');
-  //   pdfService.setupAnnotationSet({ ...annotationSet });
-  //   pdfService.setupCommentSet(1);
-  //   const specificAnnotationSet = pdfService.annotationSetComponents.find((annotation) => annotation.instance.page === 1);
-  //
-  //   spyOn(specificAnnotationSet.instance, 'initialise').and.callThrough();
-  //   const mockRealElement = document.createElement('div');
-  //   const mockEventSource: PageEvent = {
-  //     pageNumber: 1,
-  //     source: {
-  //       rotation: 0,
-  //       scale: 1,
-  //       div: mockRealElement
-  //     }
-  //   };
-  //
-  //   pdfService.onPageRendered(mockEventSource);
-  //
-  //   expect(specificAnnotationSet.instance.initialise).toHaveBeenCalledWith(mockEventSource.source);
-  // });
-
-  // fit('should initialise annotation set and comment set components', () => {
-  //   spyOn<any>(pdfService, 'setupCommentSet').and.returnValue(commentSetComponent);
-  //   const mockRealElement = document.createElement('div');
-  //   const mockEventSource: PageEvent = {
-  //     pageNumber: 1,
-  //     source: {
-  //       rotation: 0,
-  //       scale: 1,
-  //       div: mockRealElement
-  //     }
-  //   };
-  //
-  //   pdfService.onPageRendered(mockEventSource);
-  // });
 
   it('should highlight shape on the selected page', () => {
     const mockPdfComponentViewer = { nativeElement: { querySelector: () => {}}};
