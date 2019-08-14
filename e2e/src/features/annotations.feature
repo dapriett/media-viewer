@@ -23,3 +23,7 @@ Feature:  Media Viewer Annotations
 #    Then I verify whether the comment has been saved
 
 
+  @PDF_Add_Annotation
+  Scenario: Highlight text and add comment
+    When I highlight text on a PDF document
+    Then I should be able to add comment for the highlight
