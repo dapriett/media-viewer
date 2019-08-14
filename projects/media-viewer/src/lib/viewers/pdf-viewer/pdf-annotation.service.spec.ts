@@ -162,12 +162,12 @@ describe('PdfAnnotationService', () => {
   // });
 
   it('should highlight shape on the selected page', () => {
-    pdfService.init(pdfWrapper, elementRef);
-
+    const mockPdfComponentViewer = { nativeElement: { querySelector: () => {}}};
+    pdfService.init(pdfWrapper, mockPdfComponentViewer as ElementRef);
     spyOn(pdfService.pdfWrapper, 'getPageNumber').and.returnValue(1);
     spyOn(pdfService.pdfWrapper, 'getNormalisedPagesRotation').and.returnValue(0);
     spyOn(pdfService.pdfWrapper, 'getCurrentPDFZoomValue').and.returnValue(1);
-    spyOn(pdfService.pdfViewer.nativeElement, 'querySelector');
+    spyOn(mockPdfComponentViewer.nativeElement, 'querySelector');
     spyOn(toolbarEvent.drawMode, 'getValue').and.returnValue(true);
     const mouseEvent = new MouseEvent('click');
     pdfService.pages.push(1);
