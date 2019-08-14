@@ -71,20 +71,9 @@ export class AppPage {
     }, 10000, 'failed to load search results');
   }
 
-  async selectPDFText() {
-    const textSel = await browser.findElement(by.xpath('//div[contains(text(),\'Abstract\')]'));
-    console.log(await textSel.getText());
-    // const textSel = element(by.xpath('//div[contains(text(),\'Abstract\')]')).getWebElement();
-    console.log('prior to click');
-    await browser.actions().mouseDown(element(by.css('div[class="textLayer"]'))).perform();
-    console.log('after click');
-    await browser.actions().mouseMove(element(by.css('div[class="textLayer"]')), {x: 593, y: 0}).perform();
-    await browser.actions().mouseUp().perform();
-    console.log('after mouseup');
-  }
-   async getClassAttributeOfAnElement(selector: By): Promise<string[]> {
+  async getClassAttributeOfAnElement(selector: By): Promise<string[]> {
     let splitClasses: string[] = [];
-    return await element(selector).getAttribute('class').then( (classes) => {
+    return await element(selector).getAttribute('class').then((classes) => {
       splitClasses = classes.split(' ');
       return splitClasses;
     }).catch(() => []);
@@ -92,9 +81,9 @@ export class AppPage {
 
   async highLightTextOnPdfPage() {
     await browser.executeScript(() => {
-      const range = document.createRange();
+      var range = document.createRange();
       // tslint:disable-next-line:max-line-length
-      const matchingElement =   document.evaluate('//div[text()=\'Dynamic languages such as JavaScript are more difficult to com-\']', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+      var matchingElement = document.evaluate('//div[text()=\'Dynamic languages such as JavaScript are more difficult to com-\']', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
       range.selectNodeContents(matchingElement);
       const sel = window.getSelection();
       sel.removeAllRanges();
@@ -120,7 +109,7 @@ export class AppPage {
     element(this.commentButton).click();
   }
 
-  async sleep(time: number)  {
+  async sleep(time: number) {
     await browser.sleep(time);
 
   }
