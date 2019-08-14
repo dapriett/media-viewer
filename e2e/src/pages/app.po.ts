@@ -4,6 +4,10 @@ import {By} from '@angular/platform-browser';
 const until = protractor.ExpectedConditions;
 
 export class AppPage {
+  
+  
+  commentButton : By = By.css(".toolbar button[title='Comment']");
+  annotationTextArea : By = By.css("textarea");
 
   async navigateTo() {
     await browser.driver.navigate().to(browser.baseUrl);
@@ -78,5 +82,43 @@ export class AppPage {
     await browser.actions().mouseMove(element(by.css('div[class="textLayer"]')), {x: 593, y: 0}).perform();
     await browser.actions().mouseUp().perform();
     console.log('after mouseup');
+  }
+  
+   async getClassAttributeOfAnElement(selector : By) : Promise<string[]> {
+    var splitClasses:string[] = [];
+    return await element(selector).getAttribute('class').then( (classes) => {
+      splitClasses = classes.split(' ');
+      return splitClasses;
+    }).catch(() => {return []});
+  }
+
+  async highLightTextOnPdfPage(text : string){
+    await browser.executeScript(() => {
+      var range = document.createRange();
+      var xpath = "//div[text()='" + text + "']";
+      var matchingElement = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+      range.selectNodeContents(matchingElement);
+      var sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+    });
+
+    this.getHighlightPopUp();
+  }
+
+  async getHighlightPopUp(){
+    await browser.executeScript(() => {
+      let mousedown = document.createEvent("Event");
+      mousedown.initEvent("mousedown", true, true);
+      let mouseup = document.createEvent("Event");
+      mouseup.initEvent("mouseup", true, true);
+      var pageHandle = document.getElementsByClassName("pdfViewer")[0];
+      pageHandle.dispatchEvent(mousedown);
+      pageHandle.dispatchEvent(mouseup);
+    });
+  }
+
+  async clickOnCommentButton(){
+    element(this.commentButton).click();
   }
 }
