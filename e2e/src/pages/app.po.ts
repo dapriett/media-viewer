@@ -81,9 +81,11 @@ export class AppPage {
 
   async highLightTextOnPdfPage() {
     await browser.executeScript(() => {
-      var range = document.createRange();
+      const range = document.createRange();
+      console.log('before matching');
       // tslint:disable-next-line:max-line-length
-      var matchingElement = document.evaluate('//div[text()=\'Dynamic languages such as JavaScript are more difficult to com-\']', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+      const matchingElement = document.evaluate('//div[text()=\'Dynamic languages such as JavaScript are more difficult to com-\']', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+      console.log('matching element' + matchingElement);
       range.selectNodeContents(matchingElement);
       const sel = window.getSelection();
       sel.removeAllRanges();

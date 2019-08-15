@@ -12,7 +12,7 @@ Feature:  Media Viewer Annotations
     When I highlight text on a PDF document
     Then I expect text highlight popup should appear
 
-  @PDF_Add_Annotation
-  Scenario: Highlight text and add comment
-    When I highlight text on a PDF document
-    Then I should be able to add comment for the highlight
+#  @PDF_Add_Annotation
+#  Scenario: Highlight text and add comment
+#    When I highlight text on a PDF document
+#    Then I should be able to add comment for the highlight
