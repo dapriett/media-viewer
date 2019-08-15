@@ -71,6 +71,12 @@ export class PdfJsWrapper {
   public getPageNumber(): number {
     return this.pdfViewer.currentPageNumber;
   }
+  public getPageContainer(pageNumber: number): HTMLElement {
+    return this.pdfViewer.getPageView(pageNumber) ? this.pdfViewer.getPageView(pageNumber).div : null;
+  }
+  public getCurrentPageContainer(): HTMLElement {
+    return this.getPageContainer(this.getPageNumber() - 1);
+  }
   public changePageNumber(numPages: number): void {
     this.pdfViewer.currentPageNumber += numPages;
   }
@@ -120,6 +126,17 @@ export class PdfJsWrapper {
 
   public getCurrentPDFZoomValue(): number {
     return this.pdfViewer.currentScaleValue;
+  }
+
+  public createCurrentPageEvent(): PageEvent {
+    return {
+      pageNumber: this.getPageNumber(),
+        source: {
+        rotation: this.getNormalisedPagesRotation(),
+        scale: this.getCurrentPDFZoomValue(),
+        div: this.getCurrentPageContainer()
+      }
+    };
   }
 }
 

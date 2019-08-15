@@ -23,6 +23,9 @@ describe('PdfJsWrapper', () => {
     },
     findController: {
       executeCommand: () => {}
+    },
+    getPageView: (pageNumber: number): any => {
+      return null;
     }
   };
 
@@ -157,6 +160,25 @@ describe('PdfJsWrapper', () => {
     mockViewer.currentPageNumber = 1;
     wrapper.changePageNumber(-2);
     expect(mockViewer.currentPageNumber).toEqual(-1);
+  });
+
+  it('should return page container', () => {
+    spyOn(mockViewer, 'getPageView').and.returnValue({div: {}});
+    expect(wrapper.getPageContainer(1)).not.toBeNull();
+    expect(mockViewer.getPageView).toHaveBeenCalled();
+  });
+
+  it('should not return page container if page view does not exist', () => {
+    spyOn(mockViewer, 'getPageView').and.returnValue(null);
+    expect(wrapper.getPageContainer(1)).toBeNull();
+    expect(mockViewer.getPageView).toHaveBeenCalled();
+  });
+
+  it('should return current page container', () => {
+    mockViewer.currentPageNumber = 1;
+    spyOn(mockViewer, 'getPageView').and.returnValue({div: {}});
+    expect(wrapper.getCurrentPageContainer()).not.toBeNull();
+    expect(mockViewer.getPageView).toHaveBeenCalled();
   });
 
 });
