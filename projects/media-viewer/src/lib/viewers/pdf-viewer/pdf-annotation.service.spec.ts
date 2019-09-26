@@ -1,5 +1,5 @@
 import { inject, TestBed } from '@angular/core/testing';
-import { PdfAnnotationService } from './pdf-annotation-service';
+import { PdfAnnotationService } from './pdf-annotation.service';
 import { ComponentFactoryResolver, ElementRef, ViewContainerRef } from '@angular/core';
 import { ToolbarEventService } from '../../toolbar/toolbar-event.service';
 import { ViewerEventService } from '../viewer-event.service';

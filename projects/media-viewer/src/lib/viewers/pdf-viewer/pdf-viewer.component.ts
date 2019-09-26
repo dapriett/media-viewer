@@ -19,7 +19,7 @@ import { ToolbarEventService } from '../../toolbar/toolbar-event.service';
 import { PrintService } from '../../print.service';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { ViewerEventService } from '../viewer-event.service';
-import { PdfAnnotationService } from './pdf-annotation-service';
+import { PdfAnnotationService } from './pdf-annotation.service';
 import { ResponseType, ViewerException } from '../error-message/viewer-exception.model';
 
 @Component({
