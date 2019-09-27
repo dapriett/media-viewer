@@ -111,7 +111,7 @@ export class PdfViewerComponent implements AfterContentInit, OnChanges, OnDestro
     }
     if (changes.annotationSet && this.annotationSet) {
       console.log('annoationSet changing', this.annotationSet);
-      this.loadDocument();
+      this.annotationService.setAnnotationSet(this.annotationSet);
     }
   }
 

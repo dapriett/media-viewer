@@ -56,6 +56,12 @@ export class PdfAnnotationService {
     }
   }
 
+  setAnnotationSet(annotationSet: AnnotationSet) {
+    this.annotationSet = annotationSet;
+    this.annotationSetComponents.forEach(annotationSetComponent => annotationSetComponent.instance.annotationSet = this.annotationSet);
+    this.commentSetComponents.forEach(commentSetComponent => commentSetComponent.instance.annotationSet = this.annotationSet);
+  }
+
   setupCommentSet(page: number): ComponentRef<CommentSetComponent> {
     const component = this.createCommentSetComponent(page);
     this.commentSetComponents.push(component);
