@@ -43,7 +43,6 @@ export class PdfAnnotationService {
   }
 
   setupAnnotationSet(annotationSet: AnnotationSet) {
-    this.destroyComponents();
     if (annotationSet) {
       this.annotationSet = annotationSet;
       this.annotationSet.annotations.forEach(annotation => {
@@ -58,7 +57,7 @@ export class PdfAnnotationService {
 
   setAnnotationSet(annotationSet: AnnotationSet) {
     this.annotationSet = annotationSet;
-    this.annotationSetComponents.forEach(annotationSetComponent => annotationSetComponent.instance.annotationSet = this.annotationSet);
+    this.setupAnnotationSet(this.annotationSet);
     this.commentSetComponents.forEach(commentSetComponent => commentSetComponent.instance.annotationSet = this.annotationSet);
   }
 
