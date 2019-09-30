@@ -44,6 +44,7 @@ export class PdfAnnotationService {
 
   setupAnnotationSet(annotationSet: AnnotationSet) {
     if (annotationSet) {
+      this.annotationSetComponents = [];
       this.annotationSet = annotationSet;
       this.annotationSet.annotations.forEach(annotation => {
         if (!this.pages.includes(annotation.page)) {
