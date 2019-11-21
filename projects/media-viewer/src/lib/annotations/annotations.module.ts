@@ -10,7 +10,6 @@ import { CommentComponent } from './comment-set/comment/comment.component';
 import { PopupToolbarComponent } from './annotation-set/annotation/popup-toolbar/popup-toolbar.component';
 import { CommentSetComponent } from './comment-set/comment-set.component';
 import { AnnotationService } from './annotation.service';
-import { TextareaAutoGrowDirective } from './comment-set/comment/textarea-auto-grow.directive';
 
 @NgModule({
   imports: [
@@ -24,8 +23,7 @@ import { TextareaAutoGrowDirective } from './comment-set/comment/textarea-auto-g
     RectangleComponent,
     CommentComponent,
     PopupToolbarComponent,
-    CommentSetComponent,
-    TextareaAutoGrowDirective
+    CommentSetComponent
   ],
   entryComponents: [
     AnnotationComponent,

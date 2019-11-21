@@ -28,7 +28,7 @@ export class CommentComponent implements OnChanges {
   commentLeftPos;
 
   @Output() commentClick = new EventEmitter<SelectionAnnotation>();
-  @Output() renderComments = new EventEmitter<Comment>();
+  @Output() commentRendered = new EventEmitter<Comment>();
   @Output() delete = new EventEmitter<Comment>();
   @Output() updated = new EventEmitter<Comment>();
   @Input() rotate = 0;
@@ -43,7 +43,7 @@ export class CommentComponent implements OnChanges {
   }
 
   ngOnChanges(): void {
-    this.reRenderComments();
+    this.commentRendered.emit(this._comment);
   }
 
   @Input()
@@ -108,10 +108,6 @@ export class CommentComponent implements OnChanges {
       this.selected = true;
       this.commentClick.emit({ annotationId: this._comment.annotationId, editable: this._editable });
     }
-  }
-
-  reRenderComments() {
-    this.renderComments.emit(this._comment);
   }
 
   onFocusOut() {
