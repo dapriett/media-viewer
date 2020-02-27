@@ -20,6 +20,16 @@
   <div class="loadingMessage" [ngClass]="{ hidden: !loadingDocument }">
     Loading...{{ loadingDocumentProgress ? loadingDocumentProgress + '%' : '' }}
   </div>
+  <ng-container *ngFor="let page of pages">
+    <mv-annotation-set *ngIf="enableAnnotations && annotationSet"
+                       [annotationSet]="annotationSet"
+                       [zoom]="zoom"
+                       [page]="1"
+                       [rotate]="rotation"
+                       [height]="page.source.div.offsetHeight"
+                       [width]="page.source.div.offsetWidth">
+    </mv-annotation-set>
+  </ng-container>
   <mv-comment-set #commentPanel
                   *ngIf="enableAnnotations && annotationSet"
                   [annotationSet]="annotationSet"
