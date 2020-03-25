@@ -1,7 +1,9 @@
 import {AnnotationEffects} from './annotations.effect';
+import { BookmarksEffects } from './bookmarks.effects';
 
-export const effects: any[] =  [AnnotationEffects];
+export const effects: any[] =  [AnnotationEffects, BookmarksEffects];
 
 export * from './annotations.effect';
+export * from './bookmarks.effects';
 
 
