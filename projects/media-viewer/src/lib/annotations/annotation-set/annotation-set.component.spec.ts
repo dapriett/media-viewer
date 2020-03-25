@@ -11,7 +11,7 @@ import { Observable, of } from 'rxjs';
 import { ToolbarEventService } from '../../toolbar/toolbar-event.service';
 import { CommentService } from '../comment-set/comment/comment.service';
 import { MutableDivModule } from 'mutable-div';
-import { TextHighlightCreateService } from './annotation-create/text-highlight-create.service';
+import { HighlightCreateService } from './annotation-create/highlight-create.service';
 import { BoxHighlightCreateComponent } from './annotation-create/box-highlight-create.component';
 import { BoxHighlightCreateService } from './annotation-create/box-highlight-create.service';
 import { Highlight, ViewerEventService } from '../../viewers/viewer-event.service';
@@ -123,7 +123,7 @@ describe('AnnotationSetComponent', () => {
         { provide: AnnotationApiService, useValue: api },
         { provide: CommentService, useValue: mockCommentService },
         ToolbarEventService,
-        TextHighlightCreateService,
+        HighlightCreateService,
         BoxHighlightCreateService
       ]
     }).compileComponents();
@@ -238,7 +238,7 @@ describe('AnnotationSetComponent', () => {
   );
 
   it('should create text highlight',
-    inject([TextHighlightCreateService, ViewerEventService], fakeAsync((highlightService, viewerEvents) => {
+    inject([HighlightCreateService, ViewerEventService], fakeAsync((highlightService, viewerEvents) => {
       spyOn(highlightService, 'createTextHighlight');
       component.ngOnInit();
 

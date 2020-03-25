@@ -17,7 +17,7 @@ export class AnnotationApiService {
 
   constructor(
     private readonly httpClient: HttpClient
-  ) { }
+  ) {}
 
   public getOrCreateAnnotationSet(url: string): Observable<AnnotationSet> {
     const fixedUrl = this.fixFindCall(url);
@@ -36,7 +36,13 @@ export class AnnotationApiService {
     const fixedUrl = this.fixFindCall(url);
     return this.httpClient
       .get<AnnotationSet>(fixedUrl, { observe: 'response' , withCredentials: true });
+  }
 
+  public getBookmarks(url: string): Observable<any> {
+    const documentId = this.extractDocumentId(url);
+    return this.httpClient
+      .get(`${this.annotationApiUrl}/${documentId}/bookmarks`,
+        { observe: 'response' , withCredentials: true });
   }
 
   public postAnnotationSet(body: Partial<AnnotationSet>): Observable<AnnotationSet> {
@@ -98,5 +104,4 @@ export class AnnotationApiService {
   get annotationFullsUrl() {
     return this.annotationApiUrl + this.annotationBaseUrl;
   }
-
 }
