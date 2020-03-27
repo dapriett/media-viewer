@@ -87,7 +87,7 @@ export const getAnnoPerPage = createSelector(
     }
   }
 );
-
+/// add here the tags
 export const getCommentsArray = createSelector(
   getAnnComments,
   getAnnoPages,
@@ -101,7 +101,7 @@ export const getCommentsArray = createSelector(
           ...comments[key],
           page,
           pageHeight
-        }
+        };
       });
     }
   }

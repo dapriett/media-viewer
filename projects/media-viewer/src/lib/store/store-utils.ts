@@ -1,4 +1,5 @@
 import {Annotation} from '../annotations/annotation-set/annotation-view/annotation.model';
+import {TagItemModel} from '../annotations/models/tag-item.model';
 // @dynamic
 export class StoreUtils {
 
@@ -18,6 +19,28 @@ export class StoreUtils {
           return {
             ...commentEntities,
             [annotation.id]: comment
+          };
+        }
+        return {
+          ...commentEntities
+        };
+      }, {});
+  }
+
+  static generateTagEntities(annotations): {[id: string]: TagItemModel[]} {
+    return annotations.reduce(
+      (commentEntities: { [id: string]: Annotation }, annotation: Annotation) => {
+        if (annotation.tags.length) {
+          const tags = annotation.tags;
+          const snakeCased = tags.map(item => {
+            return {
+              ...item,
+              name: this.snakeCase(item.name)
+            };
+          });
+          return {
+            ...commentEntities,
+            [annotation.id]: snakeCased
           };
         }
         return {
@@ -51,6 +74,14 @@ export class StoreUtils {
       return object;
     }, {});
   }
+
+  static snakeCase = string => {
+    // transform string_to_snake_case
+    return string.replace(/\W+/g, " ")  // find space
+      .split(/ |\B(?=[A-Z])/) // split it into array
+      .map(word => word.toLowerCase()) // transform to lover case
+      .join('_'); // trun array into sting using _
+  };
 
 
 }

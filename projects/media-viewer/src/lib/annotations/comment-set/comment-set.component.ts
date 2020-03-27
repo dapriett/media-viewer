@@ -56,7 +56,7 @@ export class CommentSetComponent implements OnInit, OnDestroy, OnChanges {
     if (changes.annotationSet && this.annotationSet.annotations) {
       this.annotationSet.annotations.map(annotation => {
         if (annotation.comments.length) {
-          // todo move this to srore
+          // todo move this to store
           this.tagsServices.updateTagItems(annotation.tags, annotation.id);
         }
       });
