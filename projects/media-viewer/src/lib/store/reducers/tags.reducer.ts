@@ -18,54 +18,50 @@ export function tagsReducer (
   switch (action.type) {
     case fromAnnotations.LOAD_ANNOTATION_SET_SUCCESS: {
       const annotations = action.payload.annotations;
-      const tagEntities = StoreUtils.generateTagEntities(annotations);
+      const tagEntities = StoreUtils.genTagNameEntities(annotations);
       return {
         ...state,
         tagEntities
       };
     }
 
-    case fromAnnotations.SAVE_ANNOTATION_SUCCESS: {
-      const annotation = action.payload;
-      const isDelete = !annotation.comments.length && !annotation.tags.length;
-      const tagEntities = {
-        ...state.tagEntities,
-        [annotation.id]: annotation.tags
-      };
+    // case fromAnnotations.SAVE_ANNOTATION_SUCCESS: {
+    //   const annotation = action.payload;
+    //   const tagEntities = {
+    //     ...state.tagEntities,
+    //     ...StoreUtils.genTagNameEntities([annotation])
+    //   };
+    //   return {
+    //     ...state,
+    //     tagEntities
+    //   }
+    //
+    // }
 
-      if (isDelete) {
-        delete tagEntities[annotation.annotationId];
-      }
-      return {
-        ...state,
-        tagEntities
-      };
-    }
-
-    case fromAnnotations.DELETE_ANNOTATION_SUCCESS: {
-      const annotation = action.payload;
-      const tagEntities = {
-        ...state.tagEntities,
-      };
-      delete tagEntities[annotation];
-      return {
-        ...state,
-        tagEntities
-      };
-    }
-
-    case fromTags.UPDATE_TAGS: {
-      const payload = action.payload;
-      const tagEntities = {
-        ...state.tagEntities,
-        [payload.annoId]: payload.tags
-      };
-
-      return {
-        ...state,
-        tagEntities
-      };
-    }
+    // case fromAnnotations.DELETE_ANNOTATION_SUCCESS: {
+    //   const annotation = action.payload;
+    //   const tagEntities = {
+    //     ...state.tagEntities,
+    //   };
+    //   delete tagEntities[annotation];
+    //   return {
+    //     ...state,
+    //     tagEntities
+    //   };
+    // }
+    //
+    // case fromTags.UPDATE_TAGS: {
+    //   const payload = action.payload;
+    //   const tagEntities = {
+    //     ...state.tagEntities,
+    //     [payload.annoId]: payload.tags
+    //   };
+    //
+    //   return {
+    //     ...state,
+    //     tagEntities
+    //   };
+    // }
 
   }
   return state;

@@ -1,11 +1,10 @@
 import {Annotation} from '../annotations/annotation-set/annotation-view/annotation.model';
-import {TagsModel} from '../annotations/models/tags.model';
 // @dynamic
 export class StoreUtils {
 
-  static generatePageEntities(annotations): {[id: string]: Annotation[]} {
+  static groupByKeyEntities(annotations, key): {[id: string]: Annotation[]} {
     return annotations.reduce((h, obj) =>
-      Object.assign(h, { [obj.page]:( h[obj.page] || [] ).concat(obj) }), {});
+      Object.assign(h, { [obj[key]]:( h[obj[key]] || [] ).concat(obj) }), {});
   }
 
   static generateCommentsEntities(annotations): {[id: string]: Comment} {
@@ -27,26 +26,40 @@ export class StoreUtils {
       }, {});
   }
 
-  static generateTagEntities(annotations): {[id: string]: TagsModel[]} {
-    return annotations.reduce(
-      (commentEntities: { [id: string]: Annotation }, annotation: Annotation) => {
-        if (annotation.tags.length) {
-          const tags = annotation.tags;
-          const snakeCased = tags.map(item => {
-            return {
-              ...item,
-              name: this.snakeCase(item.name)
-            };
-          });
-          return {
-            ...commentEntities,
-            [annotation.id]: snakeCased
-          };
-        }
+  // todo group this by name ['annoid']
+  static genTagNameEntities(annotations) {
+    const allTags = annotations.map(anno => this.groupByKeyEntities(anno.tags, 'name'));
+    console.log(allTags)
+    console.log(annotations)
+    const groupedByName = allTags.reduce(
+      (tagEntitiy: { [id: string]: Annotation }, tagItem) => {
+        const tag = tagItem;
         return {
-          ...commentEntities
+          ...tagEntitiy,
+          ...tag
         };
       }, {});
+
+    return this.genNameEnt(annotations, groupedByName)
+  };
+
+  static genNameEnt(annos, groupedByName) {
+     return Object.keys(groupedByName).reduce(
+      (tagNameEnt, key) => {
+        const annot = annos.map(anno => {
+          const tags = anno.tags.map(tag => {
+            if (tag.name === key) {
+              return anno.id;
+            }
+          });
+          return tags.filter(a => a !== undefined);
+        });
+        return {
+          ...tagNameEnt,
+          [key]: [...annot].filter(a =>  !!a.length)
+        }
+      }, {});
+
   }
 
   static generateAnnotationEntities(anno): {[id: string]: Annotation} {

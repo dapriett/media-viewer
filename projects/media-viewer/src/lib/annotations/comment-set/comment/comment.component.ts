@@ -1,4 +1,5 @@
 import {
+  AfterContentInit,
   Component,
   ElementRef,
   EventEmitter,
@@ -24,7 +25,7 @@ import * as fromStore from '../../../store';
   selector: 'mv-anno-comment',
   templateUrl: './comment.component.html'
 })
-export class CommentComponent implements OnInit, OnDestroy {
+export class CommentComponent implements OnInit, OnDestroy, AfterContentInit {
 
   COMMENT_CHAR_LIMIT = 5000;
   lastUpdate: string;
@@ -74,6 +75,11 @@ export class CommentComponent implements OnInit, OnDestroy {
     this.reRenderComments();
   }
 
+  ngAfterContentInit(): void {
+    if (this.tagItems && this.tagItems.length) {
+      this.tagsServices.updateTagItems(this.tagItems, this._comment.annotationId);
+    }
+  }
 
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
@@ -93,10 +99,6 @@ export class CommentComponent implements OnInit, OnDestroy {
     this.selected = this._comment.selected;
     this._editable = this._comment.editable;
     this.tagItems = this._comment.tags;
-
-    // if (this.tagItems && this.tagItems.length) {
-    //   this.tagsServices.updateTagItems(this.tagItems, this._comment.annotationId);
-    // }
     const pageMarginBottom = 10;
     this.totalPreviousPagesHeight = 0;
     for (let i = 0; i < this.page - 1; i++) {
