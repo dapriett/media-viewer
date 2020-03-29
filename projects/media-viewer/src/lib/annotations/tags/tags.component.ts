@@ -1,8 +1,10 @@
-import {Component, Input, ViewEncapsulation} from '@angular/core';
-import {TagItemModel} from '../models/tag-item.model';
+import {Component, EventEmitter, Input, Output, ViewEncapsulation} from '@angular/core';
+import {TagsModel} from '../models/tags.model';
 import {TagsServices} from '../services/tags/tags.services';
 import {FormControl} from '@angular/forms';
 import {Observable} from 'rxjs';
+import {Store} from '@ngrx/store';
+import * as fromStore from '../../store';
 
 @Component({
   selector: 'mv-tags',
@@ -10,10 +12,11 @@ import {Observable} from 'rxjs';
   encapsulation: ViewEncapsulation.None
 })
 export class TagsComponent {
-  @Input() tagItems: TagItemModel[];
+  @Input() tagItems: TagsModel[];
   @Input() userId: string;
   @Input() editable: boolean;
   @Input() annoId: string;
+  @Output() tagsUpdate = new EventEmitter<{tags: TagsModel[]; annoId: string}>()
 
   public validators = [this.minLength, this.maxLength20];
   public errorMessages: {[id: string]: string} = {
@@ -21,10 +24,15 @@ export class TagsComponent {
     'maxLength20': 'Maximum of 20 characters'
   };
 
-  constructor(private tagsServices: TagsServices) {}
+  constructor(
+    private tagsServices: TagsServices,
+    private store: Store<fromStore.TagsState>) {}
 
-  onUpdateTags(value) {
-    this.tagsServices.updateTagItems(value, this.annoId);
+  onUpdateTags(tags) {
+    const annoId = this.annoId
+    this.store.dispatch(new fromStore.UpdateTags({tags, annoId}));
+
+    // this.tagsServices.updateTagItems(value, this.annoId);
   };
 
   public requestAutocompleteItems = (text: string): Observable<any[]> => {

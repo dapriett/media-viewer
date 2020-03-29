@@ -1,5 +1,5 @@
 import {Annotation} from '../annotations/annotation-set/annotation-view/annotation.model';
-import {TagItemModel} from '../annotations/models/tag-item.model';
+import {TagsModel} from '../annotations/models/tags.model';
 // @dynamic
 export class StoreUtils {
 
@@ -27,7 +27,7 @@ export class StoreUtils {
       }, {});
   }
 
-  static generateTagEntities(annotations): {[id: string]: TagItemModel[]} {
+  static generateTagEntities(annotations): {[id: string]: TagsModel[]} {
     return annotations.reduce(
       (commentEntities: { [id: string]: Annotation }, annotation: Annotation) => {
         if (annotation.tags.length) {

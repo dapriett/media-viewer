@@ -13,11 +13,11 @@ import {User} from '../../models/user.model';
 import {Rectangle} from '../../annotation-set/annotation-view/rectangle/rectangle.model';
 import {SelectionAnnotation} from '../../models/event-select.model';
 import {CommentService} from './comment.service';
-import {TagItemModel} from '../../models/tag-item.model';
+import {TagsModel} from '../../models/tags.model';
 import {TagsServices} from '../../services/tags/tags.services';
 import { Subscription } from 'rxjs';
-import { distinctUntilChanged } from 'rxjs/operators';
-import {Store} from '@ngrx/store';
+import {distinctUntilChanged, take} from 'rxjs/operators';
+import {select, Store} from '@ngrx/store';
 import * as fromStore from '../../../store';
 
 @Component({
@@ -43,18 +43,18 @@ export class CommentComponent implements OnInit, OnDestroy {
   hasUnsavedChanges = false;
   selected: boolean;
   searchString: string;
-  public tagItems: TagItemModel[];
 
 
   @Output() commentClick = new EventEmitter<SelectionAnnotation>();
   @Output() renderComments = new EventEmitter<Comment>();
   @Output() delete = new EventEmitter<Comment>();
-  @Output() updated = new EventEmitter<{comment: Comment, tags: TagItemModel[]}>();
+  @Output() updated = new EventEmitter<{comment: Comment, tags: TagsModel[]}>();
   @Output() changes = new EventEmitter<boolean>();
   @Input() rotate = 0;
   @Input() zoom = 1;
   @Input() index: number;
   @Input() page: number;
+  @Input() tags: TagsModel[];
 
   @ViewChild('form') form: ElementRef;
   @ViewChild('editableComment') editableComment: ElementRef<HTMLElement>;
@@ -74,7 +74,6 @@ export class CommentComponent implements OnInit, OnDestroy {
     this.reRenderComments();
   }
 
-
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
   }
@@ -90,7 +89,7 @@ export class CommentComponent implements OnInit, OnDestroy {
     this.editor = comment.lastModifiedByDetails;
     this.originalComment = comment.content;
     this.fullComment = this.originalComment;
-    this.tagItems = this.tagsServices.getTagItems(this._comment.annotationId);
+    // this.tagItems = this.tagsServices.getTagItems(this._comment.annotationId);
 
     this.selected = this._comment.selected;
     this._editable = this._comment.editable;
@@ -143,14 +142,18 @@ export class CommentComponent implements OnInit, OnDestroy {
       this._editable = true;
     } else {
       this._comment.content = this.fullComment.substring(0, this.COMMENT_CHAR_LIMIT);
-      const tags = this.tagsServices.getTagItems(this._comment.annotationId);
-      const payload = {
-        comment: this._comment,
-        tags
-      };
-      this.updated.emit(payload);
-      this.hasUnsavedChanges = false;
-      this._editable = false;
+      // const tags = this.tagsServices.getTagItems(this._comment.annotationId);
+      this.store.pipe(select(fromStore.getTagEntities), take(1)).subscribe(tagEnt => {
+        const tags = tagEnt[this._comment.annotationId]
+        const payload = {
+          comment: this._comment,
+          tags
+        };
+        this.updated.emit(payload);
+        this.hasUnsavedChanges = false;
+        this._editable = false;
+
+      })
       this.changes.emit(false);
     }
   }

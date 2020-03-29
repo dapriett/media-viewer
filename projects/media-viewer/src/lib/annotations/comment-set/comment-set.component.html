@@ -15,6 +15,7 @@
         [page]="comment.page"
         [comment]="comment"
         [rectangle]="topRectangle(comment.annotationId)"
+        [tags]="comment.tags"
         (renderComments)="redrawComments()">
     </mv-anno-comment>
   </ng-container>

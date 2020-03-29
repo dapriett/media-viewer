@@ -1,18 +1,19 @@
 import * as fromAnnotations from '../actions/annotations.action';
-import {TagItemModel} from '../../annotations/models/tag-item.model';
+import * as fromTags from '../actions/tags.actions';
+import {TagsModel} from '../../annotations/models/tags.model';
 import {StoreUtils} from '../store-utils';
 
 export interface TagsState {
-  tagEntities: {[id: string]: TagItemModel[]};
+  tagEntities: {[id: string]: TagsModel[]};
 }
 
-export const initialState: TagsState = {
+export const initialTagState: TagsState = {
   tagEntities: {},
 };
 
-export function reducer (
-  state = initialState,
-  action: fromAnnotations.AnnotationsActions
+export function tagsReducer (
+  state = initialTagState,
+  action: fromAnnotations.AnnotationsActions | fromTags.TagsActions
 ): TagsState {
   switch (action.type) {
     case fromAnnotations.LOAD_ANNOTATION_SET_SUCCESS: {
@@ -27,6 +28,19 @@ export function reducer (
     case fromAnnotations.SAVE_ANNOTATION_SUCCESS: {
       const annotations = [action.payload];
       const tagEntities = StoreUtils.generateTagEntities(annotations);
+      return {
+        ...state,
+        tagEntities
+      };
+    }
+
+    case fromTags.UPDATE_TAGS: {
+      const payload = action.payload;
+      const tagEntities = {
+        ...state.tagEntities,
+        [payload.annoId]: payload.tags
+      };
+
       return {
         ...state,
         tagEntities
