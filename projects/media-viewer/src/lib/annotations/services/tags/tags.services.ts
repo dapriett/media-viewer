@@ -15,7 +15,7 @@ export class TagsServices {
     return this.http.get<TagsModel[]>(url);
   }
 
-  getTagItems(annoid): TagsModel[] {
+  getNewTags(annoid): TagsModel[] {
     return this.tagItems ? this.tagItems[annoid] : [];
   }
 

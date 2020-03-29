@@ -1,10 +1,10 @@
 import {
   Component,
   ElementRef,
-  Input, OnChanges,
+  Input,
   OnDestroy,
   OnInit,
-  QueryList, SimpleChanges,
+  QueryList,
   ViewChild,
   ViewChildren,
 } from '@angular/core';
@@ -19,14 +19,13 @@ import { CommentService } from './comment/comment.service';
 import { CommentSetRenderService } from './comment-set-render.service';
 import * as fromStore from '../../store';
 import {select, Store} from '@ngrx/store';
-import { TagsServices } from '../services/tags/tags.services';
 import {TagsModel} from '../models/tags.model';
 
 @Component({
   selector: 'mv-comment-set',
   templateUrl: './comment-set.component.html',
  })
-export class CommentSetComponent implements OnInit, OnDestroy, OnChanges {
+export class CommentSetComponent implements OnInit, OnDestroy {
 
   @Input() annotationSet: AnnotationSet;
   @Input() zoom: number;
@@ -48,20 +47,8 @@ export class CommentSetComponent implements OnInit, OnDestroy, OnChanges {
               private readonly viewerEvents: ViewerEventService,
               private readonly api: AnnotationApiService,
               private readonly commentService: CommentService,
-              private readonly renderService: CommentSetRenderService,
-              private tagsServices: TagsServices) {
+              private readonly renderService: CommentSetRenderService) {
     this.clearSelection();
-  }
-  ngOnChanges(changes: SimpleChanges): void {
-    // set the annotation tags state
-    if (changes.annotationSet && this.annotationSet.annotations) {
-      this.annotationSet.annotations.map(annotation => {
-        if (annotation.comments.length) {
-          // todo move this to srore
-          this.tagsServices.updateTagItems(annotation.tags, annotation.id);
-        }
-      });
-    }
   }
 
   ngOnInit() {

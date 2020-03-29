@@ -26,8 +26,28 @@ export function tagsReducer (
     }
 
     case fromAnnotations.SAVE_ANNOTATION_SUCCESS: {
-      const annotations = [action.payload];
-      const tagEntities = StoreUtils.generateTagEntities(annotations);
+      const annotation = action.payload;
+      const isDelete = !annotation.comments.length && !annotation.tags.length;
+      const tagEntities = {
+        ...state.tagEntities,
+        [annotation.id]: annotation.tags
+      };
+
+      if (isDelete) {
+        delete tagEntities[annotation.annotationId];
+      }
+      return {
+        ...state,
+        tagEntities
+      };
+    }
+
+    case fromAnnotations.DELETE_ANNOTATION_SUCCESS: {
+      const annotation = action.payload;
+      const tagEntities = {
+        ...state.tagEntities,
+      };
+      delete tagEntities[annotation];
       return {
         ...state,
         tagEntities

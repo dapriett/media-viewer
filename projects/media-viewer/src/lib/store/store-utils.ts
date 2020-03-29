@@ -13,8 +13,8 @@ export class StoreUtils {
       (commentEntities: { [id: string]: Annotation }, annotation: Annotation) => {
         if (annotation.comments.length) {
           const comment = {
-            ...annotation.comments[0]
-
+            ...annotation.comments[0] || '',
+            tags: [...annotation.tags || []]
           }
           return {
             ...commentEntities,

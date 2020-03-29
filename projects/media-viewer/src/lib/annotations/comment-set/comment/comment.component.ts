@@ -55,7 +55,6 @@ export class CommentComponent implements OnInit, OnDestroy {
   @Input() zoom = 1;
   @Input() index: number;
   @Input() page: number;
-  @Input() tags: TagsModel[];
 
   @ViewChild('form') form: ElementRef;
   @ViewChild('editableComment') editableComment: ElementRef<HTMLElement>;
@@ -65,7 +64,7 @@ export class CommentComponent implements OnInit, OnDestroy {
   constructor(
     private store: Store<fromStore.AnnotationSetState>,
     private readonly commentService: CommentService,
-    private tagsServices: TagsServices
+    private tagsServices: TagsServices // TODO replace this with the FormGroup
   ) {}
 
 
@@ -91,11 +90,13 @@ export class CommentComponent implements OnInit, OnDestroy {
     this.editor = comment.lastModifiedByDetails;
     this.originalComment = comment.content;
     this.fullComment = this.originalComment;
-    this.tagItems = this.tagsServices.getTagItems(this._comment.annotationId);
-
     this.selected = this._comment.selected;
     this._editable = this._comment.editable;
+    this.tagItems = this._comment.tags;
 
+    // if (this.tagItems && this.tagItems.length) {
+    //   this.tagsServices.updateTagItems(this.tagItems, this._comment.annotationId);
+    // }
     const pageMarginBottom = 10;
     this.totalPreviousPagesHeight = 0;
     for (let i = 0; i < this.page - 1; i++) {
@@ -144,7 +145,7 @@ export class CommentComponent implements OnInit, OnDestroy {
       this._editable = true;
     } else {
       this._comment.content = this.fullComment.substring(0, this.COMMENT_CHAR_LIMIT);
-      const tags = this.tagsServices.getTagItems(this._comment.annotationId);
+      const tags = this.tagsServices.getNewTags(this._comment.annotationId);
       const payload = {
         comment: this._comment,
         tags

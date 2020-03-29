@@ -1,5 +1,4 @@
 import * as fromAnnotations from '../actions/annotations.action';
-import * as fromTags from '../actions/tags.actions';
 import {Annotation} from '../../annotations/annotation-set/annotation-view/annotation.model';
 import {StoreUtils} from '../store-utils';
 import {SelectionAnnotation} from '../../annotations/models/event-select.model';

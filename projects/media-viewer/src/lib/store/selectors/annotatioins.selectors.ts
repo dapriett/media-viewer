@@ -92,18 +92,15 @@ export const getCommentsArray = createSelector(
   getAnnComments,
   getAnnoPages,
   getAnnotationEntities,
-  fromTags.getTagEntities,
-  (comments, pages, annoEnt, tagEnt) => {
+  (comments, pages, annoEnt) => {
     const pageHeight = pages.styles.height;
-    if (comments && pageHeight && annoEnt && tagEnt) {
+    if (comments && pageHeight && annoEnt) {
       return Object.keys(comments).map(key => {
         const page = annoEnt[key].page;
-        const tags = tagEnt[key];
         return {
           ...comments[key],
           page,
-          pageHeight,
-          tags
+          pageHeight
         };
       });
     }
