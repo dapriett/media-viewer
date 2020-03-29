@@ -35,7 +35,7 @@ export const initialState: AnnotationSetState = {
 
 export function reducer (
   state = initialState,
-  action: fromAnnotations.AnnotationsActions | fromTags.TagsActions
+  action: fromAnnotations.AnnotationsActions
 ): AnnotationSetState {
   switch (action.type) {
 

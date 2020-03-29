@@ -15,29 +15,29 @@ export class TagsServices {
     return this.http.get<TagsModel[]>(url);
   }
 
-  // getTagItems(annoid): TagsModel[] {
-  //   return this.tagItems ? this.tagItems[annoid] : [];
-  // }
-  //
-  // updateTagItems(items, annoId) {
-  //   const snakeCased = items.map(item => {
-  //     return {
-  //       ...item,
-  //       name: this.snakeCase(item.name)
-  //     };
-  //   });
-  //
-  //   this.tagItems = {
-  //     ...this.tagItems,
-  //     [annoId]: snakeCased
-  //   };
-  // }
-  //
-  // private snakeCase = string => {
-  //   // transform string_to_snake_case
-  //   return string.replace(/\W+/g, " ")  // find space
-  //     .split(/ |\B(?=[A-Z])/) // split it into array
-  //     .map(word => word.toLowerCase()) // transform to lover case
-  //     .join('_'); // trun array into sting using _
-  // }
+  getTagItems(annoid): TagsModel[] {
+    return this.tagItems ? this.tagItems[annoid] : [];
+  }
+
+  updateTagItems(items, annoId) {
+    const snakeCased = items.map(item => {
+      return {
+        ...item,
+        name: this.snakeCase(item.name)
+      };
+    });
+
+    this.tagItems = {
+      ...this.tagItems,
+      [annoId]: snakeCased
+    };
+  }
+
+  private snakeCase = string => {
+    // transform string_to_snake_case
+    return string.replace(/\W+/g, " ")  // find space
+      .split(/ |\B(?=[A-Z])/) // split it into array
+      .map(word => word.toLowerCase()) // transform to lover case
+      .join('_'); // trun array into sting using _
+  }
 }

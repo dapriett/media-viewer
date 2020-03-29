@@ -16,8 +16,8 @@ import {CommentService} from './comment.service';
 import {TagsModel} from '../../models/tags.model';
 import {TagsServices} from '../../services/tags/tags.services';
 import { Subscription } from 'rxjs';
-import {distinctUntilChanged, take} from 'rxjs/operators';
-import {select, Store} from '@ngrx/store';
+import { distinctUntilChanged } from 'rxjs/operators';
+import {Store} from '@ngrx/store';
 import * as fromStore from '../../../store';
 
 @Component({
@@ -43,6 +43,7 @@ export class CommentComponent implements OnInit, OnDestroy {
   hasUnsavedChanges = false;
   selected: boolean;
   searchString: string;
+  public tagItems: TagsModel[];
 
 
   @Output() commentClick = new EventEmitter<SelectionAnnotation>();
@@ -74,6 +75,7 @@ export class CommentComponent implements OnInit, OnDestroy {
     this.reRenderComments();
   }
 
+
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
   }
@@ -89,7 +91,7 @@ export class CommentComponent implements OnInit, OnDestroy {
     this.editor = comment.lastModifiedByDetails;
     this.originalComment = comment.content;
     this.fullComment = this.originalComment;
-    // this.tagItems = this.tagsServices.getTagItems(this._comment.annotationId);
+    this.tagItems = this.tagsServices.getTagItems(this._comment.annotationId);
 
     this.selected = this._comment.selected;
     this._editable = this._comment.editable;
@@ -142,18 +144,14 @@ export class CommentComponent implements OnInit, OnDestroy {
       this._editable = true;
     } else {
       this._comment.content = this.fullComment.substring(0, this.COMMENT_CHAR_LIMIT);
-      // const tags = this.tagsServices.getTagItems(this._comment.annotationId);
-      this.store.pipe(select(fromStore.getTagEntities), take(1)).subscribe(tagEnt => {
-        const tags = tagEnt[this._comment.annotationId]
-        const payload = {
-          comment: this._comment,
-          tags
-        };
-        this.updated.emit(payload);
-        this.hasUnsavedChanges = false;
-        this._editable = false;
-
-      })
+      const tags = this.tagsServices.getTagItems(this._comment.annotationId);
+      const payload = {
+        comment: this._comment,
+        tags
+      };
+      this.updated.emit(payload);
+      this.hasUnsavedChanges = false;
+      this._editable = false;
       this.changes.emit(false);
     }
   }
