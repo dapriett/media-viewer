@@ -9,5 +9,10 @@ export const getTagsRootState = createSelector(
 
 export const getTagEntities = createSelector(
   getTagsRootState,
-  fromTags.getTagEnt
+  fromTags.getTagNameEnt
+);
+
+export const getAllTagsArr = createSelector(
+  getTagEntities,
+  (tagEnt) => Object.keys(tagEnt).map(key => key)
 );

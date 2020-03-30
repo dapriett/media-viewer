@@ -4,11 +4,11 @@ import {TagsModel} from '../../annotations/models/tags.model';
 import {StoreUtils} from '../store-utils';
 
 export interface TagsState {
-  tagEntities: {[id: string]: TagsModel[]};
+  tagNameEnt: {[id: string]: string[]};
 }
 
 export const initialTagState: TagsState = {
-  tagEntities: {},
+  tagNameEnt: {},
 };
 
 export function tagsReducer (
@@ -18,48 +18,48 @@ export function tagsReducer (
   switch (action.type) {
     case fromAnnotations.LOAD_ANNOTATION_SET_SUCCESS: {
       const annotations = action.payload.annotations;
-      const tagEntities = StoreUtils.genTagNameEntities(annotations);
+      const tagNameEnt = StoreUtils.genTagNameEntities(annotations);
       return {
         ...state,
-        tagEntities
+        tagNameEnt
       };
     }
 
     // case fromAnnotations.SAVE_ANNOTATION_SUCCESS: {
     //   const annotation = action.payload;
-    //   const tagEntities = {
-    //     ...state.tagEntities,
+    //   const tagNameEnt = {
+    //     ...state.tagNameEnt,
     //     ...StoreUtils.genTagNameEntities([annotation])
     //   };
     //   return {
     //     ...state,
-    //     tagEntities
+    //     tagNameEnt
     //   }
     //
     // }
 
     // case fromAnnotations.DELETE_ANNOTATION_SUCCESS: {
     //   const annotation = action.payload;
-    //   const tagEntities = {
-    //     ...state.tagEntities,
+    //   const tagNameEnt = {
+    //     ...state.tagNameEnt,
     //   };
-    //   delete tagEntities[annotation];
+    //   delete tagNameEnt[annotation];
     //   return {
     //     ...state,
-    //     tagEntities
+    //     tagNameEnt
     //   };
     // }
     //
     // case fromTags.UPDATE_TAGS: {
     //   const payload = action.payload;
-    //   const tagEntities = {
-    //     ...state.tagEntities,
+    //   const tagNameEnt = {
+    //     ...state.tagNameEnt,
     //     [payload.annoId]: payload.tags
     //   };
     //
     //   return {
     //     ...state,
-    //     tagEntities
+    //     tagNameEnt
     //   };
     // }
 
@@ -67,6 +67,6 @@ export function tagsReducer (
   return state;
 }
 
-export const getTagEnt = (state: TagsState) => state.tagEntities;
+export const getTagNameEnt = (state: TagsState) => state.tagNameEnt;
 
 

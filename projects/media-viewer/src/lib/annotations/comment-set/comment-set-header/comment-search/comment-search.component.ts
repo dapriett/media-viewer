@@ -28,7 +28,7 @@ export class CommentSearchComponent implements AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.store.dispatch(new fromStore.SearchComment(''));
+    this.store.dispatch(new fromStore.SearchComment('')); // todo is causing js error
   }
 
   searchComments(searchText: string): void {
